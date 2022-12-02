@@ -6,9 +6,19 @@ build-backend = "hatchling.build"
 name = "Not a Graphical Game"
 version = "0.0.1"
 requires-python = ">=3.7"
+dependencies = [
+  "numpy",
+  "dataclasses",
+]
 
 [project.optional-dependencies]
 test = [
   "pytest",
   "uncertainties"
 ]
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src"
+]
+
