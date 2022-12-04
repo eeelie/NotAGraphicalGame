@@ -15,6 +15,19 @@ class Ball():
         self.pocket = False
         self.p = [x_0,y_0]
         self.v = [vx_0,vy_0]
+        self.team = self.team_name()
+
+    def team_name(self):
+        assert self.ID >= 0 and self.ID <= 15, "Not a valid ball ID."
+        
+        if self.ID >= 1 and self.ID <= 7:
+            return "solid"
+        elif self.ID >= 9 and self.ID <= 15:
+            return "stripe"
+        elif self.ID == 8:
+            return "eight"
+        elif self.ID == 0:
+            return "cue"
         
     def time_step(self, dx):
         ACCELERATION = - 0.1 # meters/second^2
