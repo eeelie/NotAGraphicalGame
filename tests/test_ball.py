@@ -1,5 +1,6 @@
 from ball import Ball
 from pytest import approx
+from pytest import raises
 
 def test_time_step():
 	ball =  Ball(1,0.5,0,0,1,0)
@@ -48,5 +49,11 @@ def test_team_names():
 	assert striped_ball.team_name() == 'stripe'
 	assert solid_ball.team_name() == 'solid'
 	assert eight_ball.team_name() == 'eight'
+
+def test_bad_team_name():
+	with raises(AssertionError):
+		bad_ball = Ball(-1,0.5,0,0,0,0)
+		bad_ball2 = Ball(18,0.5,0,0,0,0)
+
 
 
