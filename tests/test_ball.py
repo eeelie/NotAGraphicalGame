@@ -37,3 +37,16 @@ def test_collides_with_table():
 	assert B1.collides_with_table(1.27,2.54) == False
 	assert B2.collides_with_table(1.27,2.54) == True
 	assert B3.collides_with_table(1.27,2.54) == True
+
+def test_team_names():
+	cue_ball = Ball(0,0.5,0,0,0,0)
+	striped_ball = Ball(10,0.5,0,0,0,0)
+	solid_ball = Ball(3,0.5,0,0,0,0)
+	eight_ball = Ball(8,0.5,0,0,0,0)
+
+	assert cue_ball.team_name() == 'cue'
+	assert striped_ball.team_name() == 'stripe'
+	assert solid_ball.team_name() == 'solid'
+	assert eight_ball.team_name() == 'eight'
+
+
