@@ -8,6 +8,7 @@ class Ball():
     pocket: bool
     p: list[float, float]
     v: list[float, float]
+    team: str
         
     def __init__(self, ID: int, radius: float, x_0: float, y_0: float, vx_0: float, vy_0: float):
         self.ID = ID

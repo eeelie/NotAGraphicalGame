@@ -42,4 +42,3 @@ class Ball():
         new_vy = ... # perpendicular derivative physics!
         return self.__class__((new_x,new_y), (new_vx,new_vy), self.mass, self.team)
         
-

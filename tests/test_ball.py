@@ -50,6 +50,11 @@ def test_team_names():
 	assert solid_ball.team_name() == 'solid'
 	assert eight_ball.team_name() == 'eight'
 
+	assert cue_ball.team == 'cue'
+	assert striped_ball.team == 'stripe'
+	assert solid_ball.team == 'solid'
+	assert eight_ball.team == 'eight'
+
 def test_bad_team_name():
 	with raises(AssertionError):
 		bad_ball = Ball(-1,0.5,0,0,0,0)
