@@ -3,10 +3,15 @@ from pytest import approx
 from pytest import raises
 
 def test_time_step():
-	ball =  Ball(1,0.5,0,0,1,0)
-	ball.p, ball.v = ball.time_step(1)
-	assert ball.p == approx([0.95, -0.05])
-	assert ball.v == approx([0.9,-0.1])
+	BX =  Ball(1,0.5,0,0,1,0)
+	BX.p, BX.v = BX.time_step(1)
+	BY =  Ball(1,0.5,0,0,1,90)
+	BY.p, BY.v = BY.time_step(1)
+
+	assert BX.p == approx([0.95, 0.0])
+	assert BX.v == approx([0.9,0.0])
+	assert BY.p == approx([0.0, 0.95])
+	assert BY.v == approx([0.9,90.0])
 
 def test_collides_with():
 	B1 = Ball(1,0.5,0,0,0,0)

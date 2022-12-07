@@ -33,10 +33,10 @@ class Ball():
     def time_step(self, dt):
         ACCELERATION = - 0.1 # meters/second^2
         "steps forward position and velocity of ball"
-        v_x = self.v[0]*np.cos(self.v[1])
-        v_y = self.v[0]*np.sin(self.v[1])
-        a_x = ACCELERATION * np.cos(self.v[1])
-        a_y = ACCELERATION * np.sin(self.v[1])
+        v_x = self.v[0]*np.cos(self.v[1]*np.pi/180)
+        v_y = self.v[0]*np.sin(self.v[1]*np.pi/180)
+        a_x = ACCELERATION * np.cos(self.v[1]*np.pi/180)
+        a_y = ACCELERATION * np.sin(self.v[1]*np.pi/180)
         p_new = [self.p[0] + v_x*dt + 0.5*a_x*dt*dt, self.p[1] + v_y*dt + 0.5*a_y*dt*dt]
         v_new = [((v_x+a_x*dt)**2+(v_y+a_y*dt)**2)**0.5, self.v[1]]
         return p_new, v_new
