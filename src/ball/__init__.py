@@ -1,23 +1,23 @@
 import dataclasses
-
+import numpy as np
 
 @dataclasses.dataclass
 class Ball():
-    ID: int 
+    ID: int
     radius: float
     pocket: bool
     p: list[float, float]
     v: list[float, float]
     team: str
         
-    def __init__(self, ID: int, radius: float, x_0: float, y_0: float, vx_0: float, vy_0: float):
+    def __init__(self, ID: int, radius: float, x_0: float, y_0: float, v_mag: float, v_dir: float):
         self.ID = ID
         self.radius = radius
         self.pocket = False
         self.p = [x_0,y_0]
-        self.v = [vx_0,vy_0]
+        self.v = [v_mag,v_dir]
         self.team = self.team_name()
-
+       
     def team_name(self):
         assert self.ID >= 0 and self.ID <= 15, "Not a valid ball ID."
         
@@ -29,12 +29,16 @@ class Ball():
             return "eight"
         elif self.ID == 0:
             return "cue"
-        
-    def time_step(self, dx):
+
+    def time_step(self, dt):
         ACCELERATION = - 0.1 # meters/second^2
         "steps forward position and velocity of ball"
-        p_new = [self.p[0] + self.v[0]*dx + 0.5*ACCELERATION*dx*dx, self.p[1] + self.v[1]*dx + 0.5*ACCELERATION*dx*dx]
-        v_new = [self.v[0]+ACCELERATION*dx, self.v[1]+ACCELERATION*dx]
+        v_x = self.v[0]*np.cos(self.v[1])
+        v_y = self.v[0]*np.sin(self.v[1])
+        a_x = ACCELERATION * np.cos(self.v[1])
+        a_y = ACCELERATION * np.sin(self.v[1])
+        p_new = [self.p[0] + v_x*dt + 0.5*a_x*dt*dt, self.p[1] + v_y*dt + 0.5*a_y*dt*dt]
+        v_new = [((v_x+a_x*dt)**2+(v_y+a_y*dt)**2)**0.5, self.v[1]]
         return p_new, v_new
     
     def collides_with(self,other) -> bool :
