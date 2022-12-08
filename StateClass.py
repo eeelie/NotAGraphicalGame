@@ -16,8 +16,16 @@ def find_collision_angle(p_a: list[float, float], p_b: list[float, float]) -> fl
         if angle_of_contact < 0 : return angle_of_contact + (np.pi/2)
 
         
+def rotate_p_and_v(p:list[float, float], v:list[float, float], theta_radians:float):
+    "performs simple rotation on velocity [magnitude, direction] and position [x,y]"
+    
+    v_theta_new = v[1] - theta_radians
+    p_x = p[0]*np.cos(theta_radians)-p[1]*np.sin(theta_radians)
+    p_y = p[0]*np.sin(theta_radians)+p[1]*np.cos(theta_radians)
+    return [p_x, p_y], [v[0], v_theta_new]
+        
 def collision_confirmed(p_ay: float, p_by: float, v_ay: float, v_by: float) -> bool:
-    "this is a simple helper function to take the transformed y positionas and velocity"
+    "this is a simple helper function to take the rotated y positions and velocity"
     "of two colliding balls and confirm that they are going to hit each other"
     
     if (p_ay < p_by) and (v_ay < 0) and (v_by > 0):
@@ -34,6 +42,16 @@ def collision_confirmed(p_ay: float, p_by: float, v_ay: float, v_by: float) -> b
         return False
     else:
         return True
+    
+def post_collision_velocities(v_ax:float, v_ay:float, v_bx:float, v_by:float):
+    "takes the rotated velocities of colliding balls in x and y components with respect to"
+    "the collision plane, returns v of each ball in [mag, theta]"
+    
+    v_a_new = (v_ax**2 + v_by**2)**0.5
+    v_b_new = (v_bx**2 + v_ay**2)**0.5
+    theta_a_new = np.arctan(v_by/v_ax) + collision_angle
+    theta_b_new = np.arctan(v_ay/v_bx) + collision_angle
+    return [v_a_new, theta_a_new], [v_b_new, theta_b_new]
 
     
 @dataclasses.dataclass
@@ -85,29 +103,24 @@ class State():
                         v_a = balls[ID].v
                         v_b = balls[other_ID].v
                         
-                        # performing rotation on velocity and decomposing
+                        # performing rotation on positions and velocities
                         collision_angle = find_collision_angle(p_a, p_b)
-                        v_a[1] -= collision_angle
-                        v_b[1] -= collision_angle
+                        p_a, v_a = rotate_p_and_v(p_a, v_a, collision_angle)
+                        p_b, v_b = rotate_p_and_v(p_b, v_b, collision_angle)
                         
+                        # decomposing velocity in new frame of reference
                         v_ax = v_a[0]*np.sin(v_a[1])
                         v_ay = v_a[0]*np.cos(v_a[1])
                         v_bx = v_b[0]*np.sin(v_b[1])
                         v_by = v_b[0]*np.cos(v_b[1])
                         
                         # checking if the overlapping balls actually hit each other
-                        p_ay = p_a[0]*np.sin(collision_angle)+p_a[1]*np.cos(collision_angle)
-                        p_by = p_b[0]*np.sin(collision_angle)+p_b[1]*np.cos(collision_angle)
-                        
-                        if collision_confirmed(p_ay, p_by, v_ay, v_by):
-                            # change velocities of both balls
-                            v_a_new = (v_ax**2 + v_by**2)**0.5
-                            v_b_new = (v_bx**2 + v_ay**2)**0.5
-                            theta_a_new = np.arctan(v_by/v_ax) + collision_angle
-                            theta_b_new = np.arctan(v_ay/v_bx) + collision_angle
+                        if collision_confirmed(p_a[1], p_b[1], v_ay, v_by):
                             
-                            moving_ball.v = [v_a_new, theta_a_new]
-                            other.v = [v_b_new, theta_b_new]
+                            # change velocities of both balls
+                            v_a, v_b = post_collision_velocities(v_ax, v_ay, v_bx, v_by)
+                            moving_ball.v = v_a
+                            other.v = v_b
                             
                             # add modified balls back into dict
                             balls[ID] = moving_ball
