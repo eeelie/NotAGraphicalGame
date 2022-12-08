@@ -1,9 +1,21 @@
 
 import dataclasses
 from BallClass.py import Ball
-import math
+import numpy as np
 
 
+def find_collision_angle(p_a: list[float, float], p_b: list[float, float]) -> float:
+    "calculates angle of tangent plane in between two colliding balls, in radians"
+    "should return a value in [-pi/2, pi/2]"
+
+    if (p_a[0] == p_b[0]) : 
+        return 0
+    else:
+        angle_of_contact = np.arctan((p_a[0]-p_b[0])/(p_a[1]-p_b[1]))
+        if angle_of_contact > 0 : return angle_of_contact - (np.pi/2)
+        if angle_of_contact < 0 : return angle_of_contact + (np.pi/2)
+
+        
 def collision_confirmed(p_ay: float, p_by: float, v_ay: float, v_by: float) -> bool:
     "this is a simple helper function to take the transformed y positionas and velocity"
     "of two colliding balls and confirm that they are going to hit each other"
@@ -23,19 +35,7 @@ def collision_confirmed(p_ay: float, p_by: float, v_ay: float, v_by: float) -> b
     else:
         return True
 
-
-def find_collision_angle(p_a: list[float, float], p_b: list[float, float]) -> float:
-    "calculates angle of tangent plane in between two colliding balls, in radians"
-    "should return a value in [-pi/2, pi/2]"
-
-    if (p_a[0] == p_b[0]) : 
-        return 0
-    else:
-        angle_of_contact = math.atan((p_a[0]-p_b[0])/(p_a[1]-p_b[1]))
-        if angle_of_contact > 0 : return angle_of_contact - (math.pi/2)
-        if angle_of_contact < 0 : return angle_of_contact + (math.pi/2)
     
-
 @dataclasses.dataclass
 class State():
     balls: dict          # dictionary of all balls in play, keyed by ID
@@ -45,16 +45,17 @@ class State():
     dt: 0.01             # seconds
     
     def __init__(self, initial_balls: dict[int: Ball]):
+        "constructor takes dict of Ball objects with ball IDs as the keys"
         self.balls = initial_balls
 
     def update(self, velocity: float, degrees: float):
-        
         "provides input to cue ball and manages interactions"
+        
         balls = self.balls
         
         # provide input to cue ball
         if 0 not in balls: raise Exception("Cue ball not in play")
-        balls[0].v = [velocity, math.radians(degrees)]
+        balls[0].v = [velocity, np.radians(degrees)]
         
         # keep track of balls in motion
         balls_in_motion = []
@@ -89,21 +90,21 @@ class State():
                         v_a[1] -= collision_angle
                         v_b[1] -= collision_angle
                         
-                        v_ax = v_a[0]*math.sin(v_a[1])
-                        v_ay = v_a[0]*math.cos(v_a[1])
-                        v_bx = v_b[0]*math.sin(v_b[1])
-                        v_by = v_b[0]*math.cos(v_b[1])
+                        v_ax = v_a[0]*np.sin(v_a[1])
+                        v_ay = v_a[0]*np.cos(v_a[1])
+                        v_bx = v_b[0]*np.sin(v_b[1])
+                        v_by = v_b[0]*np.cos(v_b[1])
                         
                         # checking if the overlapping balls actually hit each other
-                        p_ay = p_a[0]*math.sin(collision_angle)+p_a[1]*math.cos(collision_angle)
-                        p_by = p_b[0]*math.sin(collision_angle)+p_b[1]*math.cos(collision_angle)
+                        p_ay = p_a[0]*np.sin(collision_angle)+p_a[1]*np.cos(collision_angle)
+                        p_by = p_b[0]*np.sin(collision_angle)+p_b[1]*np.cos(collision_angle)
                         
                         if collision_confirmed(p_ay, p_by, v_ay, v_by):
                             # change velocities of both balls
                             v_a_new = (v_ax**2 + v_by**2)**0.5
                             v_b_new = (v_bx**2 + v_ay**2)**0.5
-                            theta_a_new = math.atan(v_by/v_ax) + collision_angle
-                            theta_b_new = math.atan(v_ay/v_bx) + collision_angle
+                            theta_a_new = np.arctan(v_by/v_ax) + collision_angle
+                            theta_b_new = np.arctan(v_ay/v_bx) + collision_angle
                             
                             moving_ball.v = [v_a_new, theta_a_new]
                             other.v = [v_b_new, theta_b_new]
@@ -118,8 +119,8 @@ class State():
                         
                 # check for table collisions and modify velocity if necessary
                 if moving_ball.collides_with_table(self.W_TABLE, self.H_TABLE):
-                    v_x = moving_ball.v[0]*math.cos(moving_ball.v[1])
-                    v_y = moving_ball.v[0]*math.sin(moving_ball.v[1])
+                    v_x = moving_ball.v[0]*np.cos(moving_ball.v[1])
+                    v_y = moving_ball.v[0]*np.sin(moving_ball.v[1])
 
                     if (moving_ball.p[0]+moving_ball.radius >= self.W_TABLE/2) and (v_x > 0):
                         v_x = -v_x
@@ -131,7 +132,7 @@ class State():
                         v_y = -v_y
 
                     moving_ball.v[0] = (v_x**2 + v_y**2)**0.5
-                    moving_ball.v[1] = math.atan(v_x/v_y)
+                    moving_ball.v[1] = np.arctan(v_x/v_y)
                     balls[ID] = moving_ball
                 
                 # check for pockets
