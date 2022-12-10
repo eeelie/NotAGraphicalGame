@@ -1,6 +1,6 @@
 
 import dataclasses
-from BallClass.py import Ball
+from BallClass import Ball
 import numpy as np
 
 
@@ -49,18 +49,19 @@ def post_collision_velocities(v_ax:float, v_ay:float, v_bx:float, v_by:float):
     
     v_a_new = (v_ax**2 + v_by**2)**0.5
     v_b_new = (v_bx**2 + v_ay**2)**0.5
-    theta_a_new = np.arctan(v_by/v_ax) + collision_angle
-    theta_b_new = np.arctan(v_ay/v_bx) + collision_angle
+    theta_a_new = np.arctan2(v_by/v_ax) + collision_angle
+    theta_b_new = np.arctan2(v_ay/v_bx) + collision_angle
     return [v_a_new, theta_a_new], [v_b_new, theta_b_new]
 
     
 @dataclasses.dataclass
 class State():
-    balls: dict          # dictionary of all balls in play, keyed by ID
-    W_TABLE: 1.27        # meters
-    H_TABLE: 2.54        # meters
-    BALL_RADIUS: 0.5715  # meters
-    dt: 0.01             # seconds
+    balls: dict               # dictionary of all balls in play, keyed by ID
+    pocketed: list            # list of ball IDs pocketed since the last turn, in order
+    W_TABLE: 1.27             # meters
+    H_TABLE: 2.54             # meters
+    BALL_RADIUS: 0.5715       # meters
+    dt: 0.01                  # seconds
     
     def __init__(self, initial_balls: dict[int: Ball]):
         "constructor takes dict of Ball objects with ball IDs as the keys"
@@ -68,6 +69,7 @@ class State():
 
     def update(self, velocity: float, degrees: float):
         "provides input to cue ball and manages interactions"
+        "updates self.balls and self.pocketed_this_turn"
         
         balls = self.balls
         
@@ -83,13 +85,14 @@ class State():
         while len(balls_in_motion) > 0:
 
             new_balls_in_motion = []
+            pocketed_this_turn = []
 
             # run through every moving ball
             for ID in balls_in_motion:
                 moving_ball = balls[ID]
                 
                 # step ball forward (update position and velocity)
-                moving_ball.time_step(self.dt)
+                moving_ball.p, moving_ball.v = moving_ball.time_step(self.dt)
                 
                 # check for collisions with all other balls and modify velocities if necessary
                 for i in range(len(balls)):
@@ -118,9 +121,7 @@ class State():
                         if collision_confirmed(p_a[1], p_b[1], v_ay, v_by):
                             
                             # change velocities of both balls
-                            v_a, v_b = post_collision_velocities(v_ax, v_ay, v_bx, v_by)
-                            moving_ball.v = v_a
-                            other.v = v_b
+                            moving_ball.v, other.v = post_collision_velocities(v_ax, v_ay, v_bx, v_by)
                             
                             # add modified balls back into dict
                             balls[ID] = moving_ball
@@ -145,13 +146,15 @@ class State():
                         v_y = -v_y
 
                     moving_ball.v[0] = (v_x**2 + v_y**2)**0.5
-                    moving_ball.v[1] = np.arctan(v_x/v_y)
+                    moving_ball.v[1] = np.arctan2(v_x/v_y)
                     balls[ID] = moving_ball
                 
                 # check for pockets
                 if moving_ball.in_pocket(self.W_TABLE, self.H_TABLE):
                     balls_in_motion.pop(ID)
                     balls.pop(ID)
+                    pocketed_this_turn.append(ID)
+                    
                 
             # add any collided balls to balls_in_motion as necessary
             balls_in_motion.append(new_balls_in_motion)
@@ -164,6 +167,7 @@ class State():
 
         # once while loop exits, log changes to balls
         self.balls = balls
+        self.pocketed = pocketed_this_turn
                         
 
     def reset_cue_ball(self):
