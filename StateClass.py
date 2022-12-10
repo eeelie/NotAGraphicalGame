@@ -1,6 +1,6 @@
 
 import dataclasses
-from BallClass.py import Ball
+from BallClass import Ball
 import numpy as np
 
 
