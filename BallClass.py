@@ -67,14 +67,14 @@ class Ball():
         "returns true if ball is colliding with table and center is within pocket regions"
         if self.collides_with_table(w,h) == False : return False
        
-        SIDE_POCKET_W = 0.1 #m
-        CORNER_POCKET_W = 0.1 #m
+        SIDE_POCKET_W = 0.127 #m
+        CORNER_POCKET_W = 0.114 #m
 
-        if SIDE_POCKET_W > self.p[1] > -SIDE_POCKET_W : 
+        if SIDE_POCKET_W/2 > self.p[1] > -SIDE_POCKET_W/2 : 
             return True
-        elif h-CORNER_POCKET_W >= self.p[1] >= CORNER_POCKET_W-h :
+        elif h/2-CORNER_POCKET_W >= self.p[1] >= CORNER_POCKET_W-h/2 :
             return False
-        elif w-CORNER_POCKET_W >= self.p[0] >= CORNER_POCKET_W-w :
+        elif w/2-CORNER_POCKET_W >= self.p[0] >= CORNER_POCKET_W-w/2 :
             return False
         else:
             return True
