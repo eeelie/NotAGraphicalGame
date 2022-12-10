@@ -20,8 +20,8 @@ class Ball():
         self.team = self.team_name()
        
     def team_name(self) -> str:
-        assert self.ID >= 0 and self.ID <= 15, "Not a valid ball ID."
-        
+        "returns team name based on ball ID"
+        if self.ID <= 0 or self.ID >= 15: raise Exception("Not a valid ball ID.")
         if self.ID >= 1 and self.ID <= 7:
             return "solid"
         elif self.ID >= 9 and self.ID <= 15:
@@ -31,9 +31,9 @@ class Ball():
         elif self.ID == 0:
             return "cue"
 
-    def time_step(self, dt):
-        ACCELERATION = - 0.1 # meters/second^2
+    def time_step(self, dt) -> tuple:
         "steps forward position and velocity of ball"
+        ACCELERATION = - 0.1 # meters/second^2
         v_x = self.v[0]*np.cos(self.v[1])
         v_y = self.v[0]*np.sin(self.v[1])
         a_x = ACCELERATION * np.cos(self.v[1])
