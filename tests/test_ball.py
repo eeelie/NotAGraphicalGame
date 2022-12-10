@@ -1,17 +1,18 @@
 from ball import Ball
 from pytest import approx
 from pytest import raises
+import numpy as np 
 
 def test_time_step():
 	BX =  Ball(1,0.5,0,0,1,0)
 	BX.p, BX.v = BX.time_step(1)
-	BY =  Ball(1,0.5,0,0,1,90)
+	BY =  Ball(1,0.5,0,0,1,np.pi/2)
 	BY.p, BY.v = BY.time_step(1)
 
 	assert BX.p == approx([0.95, 0.0])
 	assert BX.v == approx([0.9,0.0])
 	assert BY.p == approx([0.0, 0.95])
-	assert BY.v == approx([0.9,90.0])
+	assert BY.v == approx([0.9,np.pi/2])
 
 def test_collides_with():
 	B1 = Ball(1,0.5,0,0,0,0)
@@ -61,7 +62,7 @@ def test_team_names():
 	assert eight_ball.team == 'eight'
 
 def test_bad_team_name():
-	with raises(AssertionError):
+	with raises(Exception):
 		bad_ball = Ball(-1,0.5,0,0,0,0)
 		bad_ball2 = Ball(18,0.5,0,0,0,0)
 
