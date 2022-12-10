@@ -3,6 +3,17 @@ from pytest import approx
 from pytest import raises
 import numpy as np 
 
+
+def test_constructor():
+	ball1 = Ball(1,0.5,0.3,-0.4,1,np.pi/2)
+
+	assert ball1.ID == 1
+	assert ball1.radius == 0.5
+	assert ball1.pocket == False
+	assert ball1.p == [0.3,-0.4]
+	assert ball1.v == [1,np.pi/2]
+	assert ball1.team == "solid"
+
 def test_time_step():
 	BX =  Ball(1,0.5,0,0,1,0)
 	BX.p, BX.v = BX.time_step(1)
@@ -66,5 +77,18 @@ def test_bad_team_name():
 		bad_ball = Ball(-1,0.5,0,0,0,0)
 		bad_ball2 = Ball(18,0.5,0,0,0,0)
 
+def test_in_pocket():
+	ball_right_side_pocket = Ball(1,0.05,0.633,0,0.1,np.pi/3)
+	ball_left_side_pocket = Ball(2,0.05,-0.633,0,0.1,np.pi)
+	ball_corner_pocket_top = Ball(3,0.05,-0.633,1.27,0.1,np.pi)
+	ball_corner_pocket_bottom = Ball(4,0.05,0.633,-1.265,0.1,np.pi/3)
+	ball_no_pocket = Ball(5,0.05,0,0,0.1,np.pi)
+	ball_collide_no_pocket = Ball(6,0.05,0.1,1.27,0.1,np.pi)
 
+	assert ball_right_side_pocket.in_pocket(1.27,2.54) == True
+	assert ball_left_side_pocket.in_pocket(1.27,2.54) == True
+	assert ball_corner_pocket_top.in_pocket(1.27,2.54) == True
+	assert ball_corner_pocket_bottom.in_pocket(1.27,2.54) == True
+	assert ball_no_pocket.in_pocket(1.27,2.54) == False
+	assert ball_collide_no_pocket.in_pocket(1.27,2.54) == False
 
