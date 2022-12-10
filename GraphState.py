@@ -9,7 +9,7 @@ def getBallColor(ball: Ball) -> str:
 
     return colors.get(ball.ID)
 
-def graph_state(balls):
+def graph_state(state: State):
     # Create Plot
     W_TABLE = 1.27
     H_TABLE = 2.54
