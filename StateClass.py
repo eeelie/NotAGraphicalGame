@@ -6,14 +6,10 @@ import numpy as np
 
 def find_collision_angle(p_a: list[float, float], p_b: list[float, float]) -> float:
     "calculates angle of tangent plane in between two colliding balls, in radians"
-    "should return a value in [-pi/2, pi/2]"
-
-    if (p_a[0] == p_b[0]) : 
-        return 0
-    else:
-        angle_of_contact = np.arctan((p_a[0]-p_b[0])/(p_a[1]-p_b[1]))
-        if angle_of_contact > 0 : return angle_of_contact - (np.pi/2)
-        if angle_of_contact < 0 : return angle_of_contact + (np.pi/2)
+    "should return a value in [-3pi/2, pi/2]"
+    
+    angle_of_contact = np.arctan2((p_b[1]-p_a[1]),(p_b[0]-p_a[0]))
+    return angle_of_contact - (np.pi/2)
 
         
 def rotate_p_and_v(p:list[float, float], v:list[float, float], theta_radians:float):
