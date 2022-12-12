@@ -13,10 +13,11 @@ def find_collision_angle(p_a: list[float, float], p_b: list[float, float]) -> fl
         
 def rotate_p_and_v(p:list[float, float], v:list[float, float], theta_radians:float):
     "performs simple rotation on velocity [magnitude, direction] and position [x,y]"
+    "theta_radians is the collision angle, or the angle of the new frame w.r.t 0"
     
     v_theta_new = v[1] - theta_radians
-    p_x = p[0]*np.cos(theta_radians)-p[1]*np.sin(theta_radians)
-    p_y = p[0]*np.sin(theta_radians)+p[1]*np.cos(theta_radians)
+    p_x = p[0]*np.cos(-theta_radians)-p[1]*np.sin(-theta_radians)
+    p_y = p[0]*np.sin(-theta_radians)+p[1]*np.cos(-theta_radians)
     return [p_x, p_y], [v[0], v_theta_new]
         
 def collision_confirmed(p_ay: float, p_by: float, v_ay: float, v_by: float) -> bool:
@@ -107,10 +108,10 @@ class State():
                         p_b, v_b = rotate_p_and_v(p_b, v_b, collision_angle)
                         
                         # decomposing velocity in new frame of reference
-                        v_ax = v_a[0]*np.sin(v_a[1])
-                        v_ay = v_a[0]*np.cos(v_a[1])
-                        v_bx = v_b[0]*np.sin(v_b[1])
-                        v_by = v_b[0]*np.cos(v_b[1])
+                        v_ax = v_a[0]*np.cos(v_a[1])
+                        v_ay = v_a[0]*np.sin(v_a[1])
+                        v_bx = v_b[0]*np.cos(v_b[1])
+                        v_by = v_b[0]*np.sin(v_b[1])
                         
                         # checking if the overlapping balls actually hit each other
                         if collision_confirmed(p_a[1], p_b[1], v_ay, v_by):
