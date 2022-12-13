@@ -3,6 +3,9 @@ from __future__ import annotations
 import random
 import dataclasses
 from player import *
+from ball import Ball
+from state import State
+
 
 #what team is ball number ID?    
 def ball_team(ID: int):
@@ -28,6 +31,12 @@ def other_player(this_player: int) -> int:
         return 1
     if this_player == 1:
         return 0
+    
+def take_input():
+    force = float(input("Input a velocity in m/s"))
+    angle = float(input("Input an angle in degrees"))
+    return force, angle
+    
 
 @dataclasses.dataclass
 class Game():
@@ -36,14 +45,15 @@ class Game():
     and the dict with all balls still in play, which shouldnt be necessary
     '''
     players: list[Player, Player]
+    running_state: State
     current_player_id: int #0 or 1
     
-    def __init__(self, player1: Player, player2: Player):        
-        self.players = [player1, player2]
-        self.current_player_id = random.randint(0,1)    
-
+    def __init__(self, player1_name: str, player2_name: str):        
+        self.players = [Player(player1_name), Player(player2_name)]
+        self.current_player_id = random.randint(0,1)
         
     def start_game(self) -> State:
+        ''' sets up the start of the game '''
         BALL_RAD = 0.05715/2
         standard_ball_positions = [(0, 0.635), (-0.0286, 0.6846), (0.0288, 0.6848), (-0.0572, 0.7342), (0.00020, 0.7344), (0.0576, 0.7346), (-0.0858, 0.7838), (-0.0284, 0.784), (0.0289, 0.7842), (0.0864, 0.7844), (-0.1144, 0.8334), (-0.057, 0.8336), (0.0004, 0.8338), (0.0578, 0.834), (0.1152, 0.8342)]        
         eight_pos = standard_ball_positions.pop(4)
@@ -75,9 +85,36 @@ class Game():
         
         # starting a state object and graphing it
         initial_state = State(game_balls)
-        graph_state(initial_state)
-        return initial_state       
+        '''graph_state(initial_state) <<<<<<<<<<---------- uncomment when jose puts graphstate in src'''
+        self.running_state = initial_state   
+        
+    def current_player_name(self) -> str:
+        ''' returns the current player's name '''
+        return self.players[self.current_player_id].name
     
+    def update_state(self, velocity: float, angle: float):
+        ''' updates the running state '''
+        self.running_state.update(velocity, angle)
+        
+    def pocketed_this_turn(self) -> list[int]:
+        ''' return the list of pocketed balls this turn'''
+        return self.running_state.pocketed
+    
+    def update_players(self):
+        ''' updates each player's balls left list '''
+        for i in range(2):
+            self.players[i].update_balls_left(self.running_state.pocketed)
+            
+    def winner(self) -> int:
+        ''' called if 8 ball is pocketed, returns id of the winner '''
+        if self.players[self.current_player_id].down_to_the_eight:
+            if 0 not in self.pocketed_this_turn():
+                return  self.current_player_id + 1
+            else:
+                return other_player(self.current_player_id) + 1                
+        else:
+            return other_player(self.current_player_id) + 1
+        
     
     def next_player(self, pocketed: list[int]) -> int:
         """
@@ -87,7 +124,7 @@ class Game():
         
         might break if we somehow get in here and first_ball_team == "eight"
         """
-        
+
         #no balls pocketed
         if len(pocketed) == 0:
             return other_player(self.current_player_id)
