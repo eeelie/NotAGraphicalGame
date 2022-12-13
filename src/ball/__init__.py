@@ -1,3 +1,4 @@
+
 import numpy as np
 import dataclasses
 
@@ -20,7 +21,7 @@ class Ball():
        
     def team_name(self) -> str:
         "returns team name based on ball ID"
-        if self.ID < 0 or self.ID >= 15: raise Exception("Not a valid ball ID.")
+        if self.ID < 0 or self.ID > 15: raise Exception("Not a valid ball ID.")
         if self.ID >= 1 and self.ID <= 7:
             return "solid"
         elif self.ID >= 9 and self.ID <= 15:
@@ -77,3 +78,5 @@ class Ball():
             return False
         else:
             return True
+
+        # WRITE FILE TEST2

@@ -1,3 +1,4 @@
+%%writefile src/ball/__init__.py
 
 import numpy as np
 import dataclasses
@@ -78,3 +79,5 @@ class Ball():
             return False
         else:
             return True
+
+        # WRITE FILE TEST
