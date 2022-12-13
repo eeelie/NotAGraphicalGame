@@ -1,7 +1,7 @@
 
 from __future__  import annotations
 import dataclasses
-from src.ball import Ball
+from ball import Ball
 import numpy as np
 
 
@@ -77,6 +77,7 @@ class State():
         "updates self.balls and self.pocketed_this_turn"
         
         balls = self.balls
+        log = []
         
         # provide input to cue ball
         if 0 not in balls:
@@ -171,9 +172,11 @@ class State():
                 if balls[ID].v[0] <= 0.001:
                     balls[ID].v[0] = 0.0
                     balls_in_motion.remove(ID)
+            
+            # store this time frame in log
+            log.append(balls)
 
         # once while loop exits, log changes to balls
         self.balls = balls
         self.pocketed = pocketed_this_turn
-
-        
+        self.log = log
