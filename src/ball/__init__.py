@@ -79,5 +79,3 @@ class Ball():
             return False
         else:
             return True
-
-        # WRITE FILE TEST2
