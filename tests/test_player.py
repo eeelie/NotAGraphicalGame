@@ -8,11 +8,11 @@ def test_constructor():
     assert player1.name == "Hayden"
     assert player1.team == "undefined"
     assert player1.balls_left == []
-    assert player1.down_to_eight == False
+    assert player1.down_to_the_eight == False
     assert player2.name == "Jose"
     assert player1.team == "undefined"
     assert player1.balls_left == []
-    assert player1.down_to_eight == False
+    assert player1.down_to_the_eight == False
     
 def test_assign_team():
     player1 = Player("Elie")
@@ -24,7 +24,9 @@ def test_assign_team():
     assert player2.team == "solids"
 
 def test_assign_bad_team_name():
-    ...
+    with raises(Exception):
+        bad_player = ("Hayden")
+        bad_player.assign_team("polka-dots")
 
 def test_update_balls_left():
     ...    
