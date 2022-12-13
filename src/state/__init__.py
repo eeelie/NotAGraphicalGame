@@ -99,7 +99,7 @@ class State():
                 moving_ball = balls[ID]
                 
                 # step ball forward (update position and velocity)
-                moving_ball.p, moving_ball.v = moving_ball.time_step(self.DT)
+                moving_ball.time_step(self.DT)
                 
                 # check for collisions with all other balls and modify velocities if necessary
                 for i in range(len(balls)):
