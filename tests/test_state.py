@@ -1,9 +1,5 @@
 from ball import Ball
-from state import State
-from state import find_collision_angle
-from state import rotate_p_and_v
-from state import collision_confirmed
-from state import post_collision_velocities
+from state import *
 from pytest import approx
 from pytest import raises
 import numpy as np
@@ -100,14 +96,14 @@ def test_post_collision_velocities():
     assert v_a3[1] == approx(np.pi/12)
     assert v_b3[1] == approx(np.pi)
     
-def test_update_exception():
+def test_update_reset_cue():
     balls_no_cue = {
         1: Ball(1,RADIUS,0.2,0,0,0),
         2: Ball(2,RADIUS,0.2,0.2,0,0)
     }
     S = State(balls_no_cue)
-    with raises(Exception):
-        S.update(1,0)
+    S.update(0,0)
+    assert 0 in S.balls.keys()
     
 def test_update_simple():
     S = State(balls)

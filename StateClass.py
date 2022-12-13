@@ -1,4 +1,5 @@
 
+from __future__  import annotations
 import dataclasses
 from BallClass import Ball
 import numpy as np
@@ -55,6 +56,7 @@ def post_collision_velocities(v_ax:float, v_ay:float, v_bx:float, v_by:float, co
 @dataclasses.dataclass
 class State():
     balls: dict               # dictionary of all balls in play, keyed by ID
+    log: list[dict]           # list of all state dicts
     pocketed: list            # list of ball IDs pocketed since the last turn, in order
     W_TABLE: float
     H_TABLE: float
@@ -77,7 +79,8 @@ class State():
         balls = self.balls
         
         # provide input to cue ball
-        if 0 not in balls: raise Exception("Cue ball not in play")
+        if 0 not in balls:
+            self.balls[0] = Ball(0, self.BALL_RADIUS, 0, -0.635, 0, 0)
         balls[0].v = [velocity, np.radians(degrees)]
         
         # keep track of balls in motion
@@ -172,11 +175,5 @@ class State():
         # once while loop exits, log changes to balls
         self.balls = balls
         self.pocketed = pocketed_this_turn
-                        
 
-    def reset_cue_ball(self):
-        "brings cue ball back into play by setting it at the break spot"
-
-        if 0 in self.balls: raise Exception("Cue ball already in play")
-        else: self.balls[0] = Ball(0, self.BALL_RADIUS, 0, -self.H_TABLE/2, 0, 0)
         
