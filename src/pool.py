@@ -2,6 +2,7 @@
 from __future__ import annotations
 from game import *
 from visualize import *
+import datetime
 
 player1_name = input("Player 1, what's your name?")
 player2_name = input("Player 2, what's your name?")
@@ -30,8 +31,12 @@ while not game_over:
     game.update_players()
     
     # output graph
-    graph_state(running_state)
-    animate(game.running_state.log)
+    graph_state(game.running_state)
+    print(f"number of states to be graphed: {len(game.running_state.log)}")
+    anim = animate(game.running_state.log)
+    time = datetime.datetime.now()
+    file_name = f"{time.month}-{time.day}--{time.hour}-{time.minute}-{time.second}--animation.gif"
+    anim.save(file_name)
     
     # end of game logic
     if 8 in pocketed:

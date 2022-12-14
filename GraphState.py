@@ -1,8 +1,8 @@
 
 import matplotlib.pyplot as plt
 
-from BallClass import Ball
-from StateClass import State
+from ball import Ball
+from state import State
 
 # Get Ball Color for Plot
 def getBallColor(ball: Ball) -> str:

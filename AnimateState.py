@@ -1,10 +1,9 @@
 from matplotlib import animation
-from BallClass import Ball
 from GraphState import *
+from StateClass import State
 from functools import partial
 
-
-def animate(balls_to_graph: list[dict[int: Ball]]):
+def animate(states_to_graph: [State]):
     # Create Plot
     W_TABLE = 1.27
     H_TABLE = 2.54
@@ -20,13 +19,12 @@ def animate(balls_to_graph: list[dict[int: Ball]]):
         ball_patches = []
         return []
 
-    def graph(i, ball_log: list[dict[int: Ball]]):
+    def graph(i, states: [State]):
         for circle in ax.findobj(match = type(ax.add_patch(plt.Circle((0,0), 5)))):
             circle.remove()
         ball_patches = []
 
-        balls = ball_log[i]
-        for ball in balls.values():
+        for ball in states[i].balls.values():
             color = getBallColor(ball)
             ball_patches = []
 
@@ -42,8 +40,9 @@ def animate(balls_to_graph: list[dict[int: Ball]]):
     ax.get_yaxis().set_visible(False)
     ax.get_xaxis().set_visible(False)
 
-    anim = animation.FuncAnimation(fig, partial(graph, ball_log=balls_to_graph), init_func=init, frames=len(balls_to_graph), interval=100, blit=True)
+    anim = animation.FuncAnimation(fig, partial(graph, states = states_to_graph), init_func= init, frames = len(states_to_graph), interval=100, blit=True)
 
-    return anim
+    anim.save("balls_in_motion.gif", writer="Pillow")
 
+    plt.show()
 

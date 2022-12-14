@@ -19,6 +19,9 @@ class Ball():
         self.p = [x_0,y_0]
         self.v = [v_mag,v_radians]
         self.team = self.team_name()
+
+    def __copy__(self):
+        return Ball(self.ID, self.radius, self.p[0], self.p[1],self.v[0],self.v[1])
        
     def team_name(self) -> str:
         "returns team name based on ball ID"

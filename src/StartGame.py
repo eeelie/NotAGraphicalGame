@@ -1,8 +1,8 @@
 
 from __future__ import annotations
 import random
-from GraphState import *
-from StateClass import State
+from state import State
+from visualize import *
 
 def start_game() -> State:
     BALL_RAD = 0.05715/2
