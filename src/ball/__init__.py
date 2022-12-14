@@ -41,7 +41,8 @@ class Ball():
         a_y = ACCELERATION * np.sin(self.v[1])
         p_new = [self.p[0] + v_x*dt + 0.5*a_x*dt*dt, self.p[1] + v_y*dt + 0.5*a_y*dt*dt]
         v_new = [((v_x+a_x*dt)**2+(v_y+a_y*dt)**2)**0.5, self.v[1]]
-        return p_new, v_new
+        self.p = p_new
+        self.v = v_new
     
     def collides_with(self,other) -> bool :
         "returns true if ball is in collision with other ball object"

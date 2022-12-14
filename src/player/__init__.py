@@ -23,8 +23,9 @@ class Player():
         '''
         Initializes the balls_left list when the teams are assigned
         '''
-        assert team == "stripes" or team == "solids", "Not a valid team."
-      
+        if team != "stripes" and team != "solids": raise Exception("Not a valid team.")
+
+
         self.team = team
         
         if team == "solids":
