@@ -46,7 +46,6 @@ def animate(balls_to_graph: list[dict[int: Ball]]):
 
     anim = animation.FuncAnimation(fig, partial(graph, ball_log=balls_to_graph), init_func=init, frames=len(balls_to_graph), interval=100, blit=True)
 
-
     return anim
 
 # Get Ball Color for Plot
@@ -81,8 +80,3 @@ def graph_state(state: State):
     ax.get_xaxis().set_visible(False)
 
     plt.show()
-
-
-
-
-
