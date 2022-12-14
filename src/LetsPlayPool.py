@@ -46,3 +46,8 @@ while not game_over:
 
     # figure out who plays next
     game.current_player_id = game.next_player(pocketed)
+       
+    # if there's a scratch, reposition the cue ball
+    if 0 in pocketed:
+        print("Scratched, repositioning cue ball")
+        game.running_state.balls[0] = Ball(0, game.running_state.BALL_RADIUS, 0, -0.635, 0, 0)
