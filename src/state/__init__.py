@@ -163,7 +163,6 @@ class State():
                     balls.pop(ID)
                     pocketed_this_turn.append(ID)
                     
-                
             # add any collided balls to balls_in_motion as necessary
             for ID in new_balls_in_motion:
                 balls_in_motion.append(ID)

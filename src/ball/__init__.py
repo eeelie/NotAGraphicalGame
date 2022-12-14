@@ -37,7 +37,7 @@ class Ball():
 
     def time_step(self, dt) -> tuple:
         "steps forward position and velocity of ball"
-        ACCELERATION = - 0.1 # meters/second^2
+        ACCELERATION = - 0.5 # meters/second^2
         v_x = self.v[0]*np.cos(self.v[1])
         v_y = self.v[0]*np.sin(self.v[1])
         a_x = ACCELERATION * np.cos(self.v[1])
