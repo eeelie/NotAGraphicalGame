@@ -53,6 +53,74 @@ def post_collision_velocities(v_ax:float, v_ay:float, v_bx:float, v_by:float, co
     theta_b_new = np.arctan2(v_ay, v_bx) + collision_angle
     return [v_a_new, theta_a_new], [v_b_new, theta_b_new]
 
+def update_one_step(balls:dict, dt:float, w:float, h:float) -> dict:
+    "takes balls dict and updates every ball one time step, managing collisions"
+    "does not check pockets or remove any balls from the dict"
+
+    # run through every ball
+    for ID in balls.keys():
+        moving_ball = balls[ID]
+
+        # may making things faster... may mess things up
+        if moving_ball.v[0] == 0.0: continue
+        
+        # step ball forward (update position and velocity)
+        moving_ball.time_step(dt)
+        
+        # check for collisions with all other balls and modify velocities if necessary
+        for i in range(len(balls)):
+            other_ID = list(balls.keys())[i]
+            other = balls[other_ID]
+            
+            if (ID != other_ID) and moving_ball.collides_with(other):
+                # pulling position and velocity out
+                p_a = balls[ID].p
+                p_b = balls[other_ID].p
+                v_a = balls[ID].v
+                v_b = balls[other_ID].v
+                
+                # performing rotation on positions and velocities
+                collision_angle = find_collision_angle(p_a, p_b)
+                p_a, v_a = rotate_p_and_v(p_a, v_a, collision_angle)
+                p_b, v_b = rotate_p_and_v(p_b, v_b, collision_angle)
+                
+                # decomposing velocity in new frame of reference
+                v_ax = v_a[0]*np.cos(v_a[1])
+                v_ay = v_a[0]*np.sin(v_a[1])
+                v_bx = v_b[0]*np.cos(v_b[1])
+                v_by = v_b[0]*np.sin(v_b[1])
+                # checking if the overlapping balls actually hit each other
+                if collision_confirmed(p_a[1], p_b[1], v_ay, v_by):
+                    
+                    # change velocities of both balls
+                    moving_ball.v, other.v = post_collision_velocities(v_ax, v_ay, v_bx, v_by, collision_angle)
+                    
+                    # add modified balls back into dict (this may do nothing)
+                    balls[ID] = moving_ball
+                    balls[other_ID] = other
+                
+        # check for table collisions and modify velocity if necessary
+        if moving_ball.collides_with_table(w, h):
+            v_x = moving_ball.v[0]*np.cos(moving_ball.v[1])
+            v_y = moving_ball.v[0]*np.sin(moving_ball.v[1])
+
+            if (moving_ball.p[0]+moving_ball.radius >= w/2) and (v_x > 0):
+                v_x = -v_x
+            elif (moving_ball.p[0]-moving_ball.radius <= -w/2) and (v_x < 0):
+                v_x = -v_x
+            elif (moving_ball.p[1]+moving_ball.radius >= h/2) and (v_y > 0):
+                v_y = -v_y
+            elif (moving_ball.p[1]-moving_ball.radius <= -h/2) and (v_y < 0):
+                v_y = -v_y
+
+            moving_ball.v[0] = (v_x**2 + v_y**2)**0.5
+            moving_ball.v[1] = np.arctan2(v_y, v_x)
+            # may be unnecessary
+            balls[ID] = moving_ball
+    
+    # after updating every ball, return modified balls dict
+    return balls
+
     
 @dataclasses.dataclass
 class State():
@@ -68,12 +136,14 @@ class State():
         "constructor takes dict of Ball objects with ball IDs as the keys"
         self.balls = initial_balls
         
+        self.log = []
+        self.pocketed = []
         self.W_TABLE = 1.27             # meters
         self.H_TABLE = 2.54             # meters
         self.BALL_RADIUS = 0.05715/2    # meters
         self.DT = 0.01                  # seconds
 
-    def update(self, velocity: float, degrees: float):
+    def update_old(self, velocity: float, degrees: float):
         "provides input to cue ball and manages interactions"
         "updates self.balls and self.pocketed_this_turn"
         
@@ -134,10 +204,11 @@ class State():
                             # add modified balls back into dict
                             balls[ID] = moving_ball
                             balls[other_ID] = other
+
+                            # add other to new_balls_in_motion if necessary
+                            if other_ID not in balls_in_motion and other_ID not in new_balls_in_motion:
+                                new_balls_in_motion.append(other_ID)
                         
-                        # add other to new_balls_in_motion if necessary
-                        if other_ID not in balls_in_motion:
-                            new_balls_in_motion.append(other_ID)
                         
                 # check for table collisions and modify velocity if necessary
                 if moving_ball.collides_with_table(self.W_TABLE, self.H_TABLE):
@@ -180,3 +251,49 @@ class State():
         self.balls = balls
         self.pocketed = pocketed_this_turn
         self.log = log
+
+    def update(self, velocity: float, degrees: float):
+        " new update function to run a loop of single updates with helper function update_one_step() "
+    
+        balls = copy.deepcopy(self.balls)
+        log = []
+        pocketed = []
+        
+        # provide input to cue ball
+        if 0 not in balls:
+            balls[0] = Ball(0, self.BALL_RADIUS, 0, -0.635, 0, 0)
+        balls[0].v = [velocity, np.radians(degrees)]
+
+        while True:
+            # steps everything forward one step, modifies velocities, returns updated ball dict
+            balls = update_one_step(balls, self.DT, self.W_TABLE, self.H_TABLE)
+
+            # remove from balls if in pocket
+            in_pocket = []
+            for ID in balls.keys():
+                if balls[ID].in_pocket(self.W_TABLE, self.H_TABLE): in_pocket.append(ID)
+            for ID in in_pocket:
+                balls.pop(ID)
+                pocketed.append(ID)
+                print(f"ball {ID} in pocket")
+                
+            # if any ball's velocity is sufficiently low, stop ball
+            for ID in balls.keys():
+                if balls[ID].v[0] == 0.0: continue
+                if balls[ID].v[0] <= 0.001:
+                    balls[ID].v[0] = 0.0
+                    print(f"ball {ID} stopped")
+            
+            # store this time frame in log
+            log.append(copy.deepcopy(balls))
+
+            # check if all balls have stopped, break if so
+            balls_in_motion = 0
+            for ID in balls.keys():
+                if balls[ID].v[0] != 0.0: balls_in_motion += 1
+            if balls_in_motion == 0: break
+            
+        # once while loop exits, log changes to balls
+        self.balls = balls
+        self.log = log
+        self.pocketed = pocketed
