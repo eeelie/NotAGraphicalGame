@@ -3,6 +3,7 @@ from __future__  import annotations
 import dataclasses
 from ball import Ball
 import numpy as np
+import copy
 
 
 def find_collision_angle(p_a: list[float, float], p_b: list[float, float]) -> float:
@@ -76,7 +77,7 @@ class State():
         "provides input to cue ball and manages interactions"
         "updates self.balls and self.pocketed_this_turn"
         
-        balls = self.balls
+        balls = copy.deepcopy(self.balls)
         log = []
         
         # provide input to cue ball
@@ -174,7 +175,7 @@ class State():
                     balls_in_motion.remove(ID)
             
             # store this time frame in log
-            log.append(balls)
+            log.append(copy.deepcopy(balls))
 
         # once while loop exits, log changes to balls
         self.balls = balls
