@@ -7,7 +7,6 @@ import dataclasses
 class Ball():
     ID: int
     radius: float
-    pocket: bool
     p: list[float, float]
     v: list[float, float]
     team: str
@@ -15,7 +14,6 @@ class Ball():
     def __init__(self, ID: int, radius: float, x_0: float, y_0: float, v_mag: float, v_radians: float):
         self.ID = ID
         self.radius = radius
-        self.pocket = False
         self.p = [x_0,y_0]
         self.v = [v_mag,v_radians]
         self.team = self.team_name()
@@ -35,17 +33,16 @@ class Ball():
         elif self.ID == 0:
             return "cue"
 
-    def time_step(self, dt) -> tuple:
-        "steps forward position and velocity of ball"
-        ACCELERATION = - 0.5 # meters/second^2
-        v_x = self.v[0]*np.cos(self.v[1])
-        v_y = self.v[0]*np.sin(self.v[1])
-        a_x = ACCELERATION * np.cos(self.v[1])
-        a_y = ACCELERATION * np.sin(self.v[1])
-        p_new = [self.p[0] + v_x*dt + 0.5*a_x*dt*dt, self.p[1] + v_y*dt + 0.5*a_y*dt*dt]
-        v_new = [((v_x+a_x*dt)**2+(v_y+a_y*dt)**2)**0.5, self.v[1]]
-        self.p = p_new
-        self.v = v_new
+    def time_step(self, dt:float, acc:float):
+        "new implementation: steps forward position and velocity of ball and stops ball if v is suficiently small"
+        v_new = self.v[0] - np.absolute(acc)*dt
+        if v_new <=0.001:
+            self.v[0] = 0.0
+            return
+        v_x = v_new*np.cos(self.v[1])
+        v_y = v_new*np.sin(self.v[1])
+        self.p = [self.p[0] + v_x*dt, self.p[1] + v_y*dt]
+        self.v = [v_new, self.v[1]]
     
     def collides_with(self,other) -> bool :
         "returns true if ball is in collision with other ball object"
