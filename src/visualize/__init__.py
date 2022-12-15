@@ -59,8 +59,8 @@ def graph_state(state: State):
     # Create Plot
     W_TABLE = 1.27
     H_TABLE = 2.54
-    fig, ax = plt.subplots(figsize=(W_TABLE*2,H_TABLE*2))
-    plt.rcParams["hatch.linewidth"] = 1
+    fig, ax = plt.subplots(figsize=(W_TABLE*4,H_TABLE*4))
+    plt.rcParams["hatch.linewidth"] = 4
 
     ax.margins(0.3)
     ax.set_facecolor("green")
