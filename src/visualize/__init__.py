@@ -59,8 +59,8 @@ def graph_state(state: State):
     # Create Plot
     W_TABLE = 1.27
     H_TABLE = 2.54
-    fig, ax = plt.subplots(figsize=(W_TABLE*2,H_TABLE*2))
-    plt.rcParams["hatch.linewidth"] = 1
+    fig, ax = plt.subplots(figsize=(W_TABLE*4,H_TABLE*4))
+    plt.rcParams["hatch.linewidth"] = 4
 
     ax.margins(0.3)
     ax.set_facecolor("green")
@@ -68,7 +68,6 @@ def graph_state(state: State):
     ax.set_xlim(-W_TABLE/2, W_TABLE/2)
 
     for ball in state.balls.values():
-         print(ball)
          color = getBallColor(ball)
 
          if ball.team == "stripe":
@@ -83,6 +82,6 @@ def graph_state(state: State):
 
     time = datetime.datetime.now()
     file_name = f"{time.month}-{time.day}--{time.hour}-{time.minute}-{time.second}--animation.jpg"
-    plt.savefig(file_name, dpi=600)
+    plt.savefig(file_name, dpi=800)
     open_plot(file_name)
 
