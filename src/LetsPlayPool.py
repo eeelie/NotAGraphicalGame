@@ -1,13 +1,13 @@
 from __future__ import annotations
 from game import *
 from visualize import *
-import datetime
 
 player1_name = input("Player 1, what's your name?")
 player2_name = input("Player 2, what's your name?")
 
 game = Game(player1_name, player2_name)
 game.start_game()
+graph_state(game.running_state)
 
 print(f"{player1_name}, your team is {game.players[0].team}")
 print(f"{player2_name}, your team is {game.players[1].team}")
@@ -29,12 +29,11 @@ while not game_over:
     game.update_players()
 
     # output graph
-    graph_state(game.running_state)
     anim = animate(game.running_state.log)
     file_name = "replay.mp4"
-    video_writer = animation.FFMpegWriter(fps=30)
+    video_writer = animation.FFMpegWriter(fps=24)
     print("Game is being animated")
-    anim.save(file_name, writer=video_writer, savefig_kwargs={"pad_inches":0})
+    anim.save(file_name, writer=video_writer)
 
     open_visualization(file_name)
 
