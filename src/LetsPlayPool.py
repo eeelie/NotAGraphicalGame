@@ -30,7 +30,6 @@ while not game_over:
     game.update_players()
 
     # output graph
-    graph_state(game.running_state)
     anim = animate(game.running_state.log)
     time = datetime.datetime.now()
     file_name = f"{time.month}-{time.day}--{time.hour}-{time.minute}-{time.second}--animation.mp4"
