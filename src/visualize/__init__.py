@@ -3,9 +3,6 @@ from matplotlib import animation
 from ball import Ball
 from state import State
 from functools import partial
-from os import startfile as open_plot
-import sys
-import subprocess as open_file
 import datetime
 
 
@@ -125,7 +122,10 @@ def graph_state(state: State):
 
 def open_visualization(file_name: str):
     if sys.platform == "win32":
+        from os import startfile as open_plot
         open_plot(file_name)
     else:
+        import sys
+        import subprocess as open_file
         video_open = "open" if sys.platform == "darwin" else "xdg-open"
         open_file.call([video_open, file_name])
