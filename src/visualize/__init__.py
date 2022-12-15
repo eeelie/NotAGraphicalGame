@@ -4,6 +4,7 @@ from ball import Ball
 from state import State
 from functools import partial
 import datetime
+import sys
 
 
 def animate(balls_to_graph: list[dict[int:Ball]]):
@@ -125,7 +126,6 @@ def open_visualization(file_name: str):
         from os import startfile as open_plot
         open_plot(file_name)
     else:
-        import sys
-        import subprocess as open_file
+
         video_open = "open" if sys.platform == "darwin" else "xdg-open"
         open_file.call([video_open, file_name])
