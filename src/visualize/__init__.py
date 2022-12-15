@@ -3,7 +3,6 @@ from matplotlib import animation
 from ball import Ball
 from state import State
 from functools import partial
-import datetime
 import sys
 
 
@@ -114,8 +113,7 @@ def graph_state(state: State):
     ax.get_yaxis().set_visible(False)
     ax.get_xaxis().set_visible(False)
 
-    time = datetime.datetime.now()
-    file_name = f"{time.month}-{time.day}--{time.hour}-{time.minute}-{time.second}--animation.jpg"
+    file_name = "last_turn.jpg"
     plt.savefig(file_name, dpi=800)
 
     open_visualization(file_name)
