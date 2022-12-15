@@ -101,10 +101,7 @@ def graph_state(state: State):
     ax.get_yaxis().set_visible(False)
     ax.get_xaxis().set_visible(False)
 
-    file_name = "prev_turn.jpg"
-    fig.savefig(file_name, dpi=800)
-
-    open_visualization(file_name)
+    return fig
 
 def open_visualization(file_name: str):
     if sys.platform == "win32":
