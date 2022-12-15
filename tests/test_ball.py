@@ -9,7 +9,6 @@ def test_constructor():
 
     assert ball1.ID == 1
     assert ball1.radius == 0.5
-    assert ball1.pocket == False
     assert ball1.p == [0.3, -0.4]
     assert ball1.v == [1, np.pi / 2]
     assert ball1.team == "solid"
@@ -17,13 +16,13 @@ def test_constructor():
 
 def test_time_step():
     BX = Ball(1, 0.5, 0, 0, 1, 0)
-    BX.time_step(1)
+    BX.time_step(1,0)
     BY = Ball(1, 0.5, 0, 0, 1, np.pi / 2)
-    BY.time_step(1)
+    BY.time_step(1,0.1)
 
-    assert BX.p == approx([0.95, 0.0])
-    assert BX.v == approx([0.9, 0.0])
-    assert BY.p == approx([0.0, 0.95])
+    assert BX.p == approx([1.0, 0.0])
+    assert BX.v == approx([1.0, 0.0])
+    assert BY.p == approx([0.0, 0.90])
     assert BY.v == approx([0.9, np.pi / 2])
 
 
