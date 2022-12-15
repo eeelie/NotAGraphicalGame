@@ -1,6 +1,3 @@
-from mainloop import *
-
-
 def test_new_input():
     ...
 
