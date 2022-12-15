@@ -53,7 +53,7 @@ def post_collision_velocities(v_ax:float, v_ay:float, v_bx:float, v_by:float, co
     theta_b_new = np.arctan2(v_ay, v_bx) + collision_angle
     return [v_a_new, theta_a_new], [v_b_new, theta_b_new]
 
-def update_one_step(balls:dict, dt:float, acc:float,  w:float, h:float) -> dict:
+def update_one_step(balls:dict, dt:float, acc:float,  w:float, h:float, damp:float) -> dict:
     "takes balls dict and updates every ball one time step, managing collisions"
     "does not check pockets or remove any balls from the dict"
 
@@ -114,7 +114,7 @@ def update_one_step(balls:dict, dt:float, acc:float,  w:float, h:float) -> dict:
             elif (moving_ball.p[1]-moving_ball.radius <= -h/2) and (v_y < 0):
                 v_y = -v_y
 
-            moving_ball.v[0] = (v_x**2 + v_y**2)**0.5
+            moving_ball.v[0] = ((v_x**2 + v_y**2)**0.5)*damp
             moving_ball.v[1] = np.arctan2(v_y, v_x)
             balls[ID] = moving_ball
     
@@ -132,6 +132,7 @@ class State():
     BALL_RADIUS: float
     DT: float
     ACCELERATION: float
+    WALL_DAMPENING: float
     
     def __init__(self, initial_balls: dict[int: Ball]):
         "constructor takes dict of Ball objects with ball IDs as the keys"
@@ -144,6 +145,14 @@ class State():
         self.BALL_RADIUS = 0.05715/2    # meters
         self.DT = 0.01                  # seconds
         self.ACCELERATION = 0.5         # m/s^2
+        self.WALL_DAMPENING = 0.7
+
+    def modify_simulation_constants(dt:float, acc:float, damp:float):
+        "modify the time step, acceleration, and wall dampening"
+        self.DT = dt
+        self.ACCELERATION = acc
+        self.WALL_DAMPENING = damp
+
 
     def update(self, velocity: float, degrees: float):
         " new update function to run a loop of single updates with helper function update_one_step() "
@@ -164,7 +173,7 @@ class State():
             counter += 1
 
             # steps everything forward one step, modifies velocities, returns updated ball dict
-            balls = update_one_step(balls, self.DT, self.ACCELERATION, self.W_TABLE, self.H_TABLE)
+            balls = update_one_step(balls, self.DT, self.ACCELERATION, self.W_TABLE, self.H_TABLE, self.WALL_DAMPENING)
 
             # remove from balls if in pocket
             in_pocket = []
