@@ -5,6 +5,8 @@ from ball import Ball
 from state import State
 from functools import partial
 from os import startfile as open_plot
+import sys
+import subprocess as open_file
 import datetime
 
 def animate(balls_to_graph: list[dict[int: Ball]]):
@@ -83,5 +85,12 @@ def graph_state(state: State):
     time = datetime.datetime.now()
     file_name = f"{time.month}-{time.day}--{time.hour}-{time.minute}-{time.second}--animation.jpg"
     plt.savefig(file_name, dpi=800)
-    open_plot(file_name)
 
+    open_visualization(file_name)
+
+def open_visualization(file_name: str):
+    if sys.platform == "win32":
+        open_plot(file_name)
+    else:
+        video_open = "open" if sys.platform == "darwin" else "xdg-open"
+        open_file.call([video_open, file_name])
