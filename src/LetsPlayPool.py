@@ -30,7 +30,7 @@ while not game_over:
     # update each player's balls left list
     game.update_players()
     
-    # output graph
+    output graph
     graph_state(game.running_state)
     print(f"number of states to be graphed: {len(game.running_state.log)}")
     anim = animate(game.running_state.log)
@@ -45,7 +45,7 @@ while not game_over:
     
     # end of game logic
     if 8 in pocketed:
-        print(f"Game over! Player {game.winner()} wins!")
+        print(f"Game over! {game.winner()} wins!")
         break
 
     # figure out who plays next
