@@ -1,10 +1,11 @@
 
 import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib import animation
 from ball import Ball
 from state import State
 from functools import partial
+from os import startfile as open_plot
+import datetime
 
 def animate(balls_to_graph: list[dict[int: Ball]]):
     # Create Plot
@@ -59,7 +60,7 @@ def graph_state(state: State):
     W_TABLE = 1.27
     H_TABLE = 2.54
     fig, ax = plt.subplots(figsize=(W_TABLE*2,H_TABLE*2))
-    plt.rcParams["hatch.linewidth"] = 4
+    plt.rcParams["hatch.linewidth"] = 1
 
     ax.margins(0.3)
     ax.set_facecolor("green")
@@ -67,6 +68,7 @@ def graph_state(state: State):
     ax.set_xlim(-W_TABLE/2, W_TABLE/2)
 
     for ball in state.balls.values():
+         print(ball)
          color = getBallColor(ball)
 
          if ball.team == "stripe":
@@ -79,4 +81,8 @@ def graph_state(state: State):
     ax.get_yaxis().set_visible(False)
     ax.get_xaxis().set_visible(False)
 
-    plt.show()
+    time = datetime.datetime.now()
+    file_name = f"{time.month}-{time.day}--{time.hour}-{time.minute}-{time.second}--animation.jpg"
+    plt.savefig(file_name, dpi=600)
+    open_plot(file_name)
+
