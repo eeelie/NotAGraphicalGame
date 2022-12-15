@@ -16,9 +16,9 @@ def test_constructor():
 
 def test_time_step():
     BX = Ball(1, 0.5, 0, 0, 1, 0)
-    BX.time_step(1,0)
+    BX.time_step(1, 0)
     BY = Ball(1, 0.5, 0, 0, 1, np.pi / 2)
-    BY.time_step(1,0.1)
+    BY.time_step(1, 0.1)
 
     assert BX.p == approx([1.0, 0.0])
     assert BX.v == approx([1.0, 0.0])

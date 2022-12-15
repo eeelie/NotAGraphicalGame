@@ -36,7 +36,6 @@ while not game_over:
     anim.save(file_name, writer=video_writer)
     print("Game is being animated")
 
-
     open_visualization(file_name)
 
     print(f"The balls pocketed this turn were {*pocketed,}")
