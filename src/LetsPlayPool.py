@@ -33,7 +33,7 @@ while not game_over:
     anim = animate(game.running_state.log)
     file_name = "replay.mp4"
     video_writer = animation.FFMpegWriter(fps=30)
-    anim.save(file_name, writer=video_writer)
+    anim.save(file_name, writer=video_writer, savefig_kwargs={"pad_inches":0})
     print("Game is being animated")
 
     open_visualization(file_name)

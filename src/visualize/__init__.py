@@ -27,6 +27,13 @@ def animate(balls_to_graph: list[dict[int:Ball]]):
             circle.remove()
         ball_patches = []
 
+        ball_patches += [ax.add_patch(plt.Circle((1.27 / 2, 2.54 / 2), 0.114, facecolor="gray"))]
+        ball_patches += [ax.add_patch(plt.Circle((-1.27 / 2, -2.54 / 2), 0.114, facecolor="gray"))]
+        ball_patches += [ax.add_patch(plt.Circle((1.27 / 2, -2.54 / 2), 0.114, facecolor="gray"))]
+        ball_patches += [ax.add_patch(plt.Circle((-1.27 / 2, 2.54 / 2), 0.114, facecolor="gray"))]
+        ball_patches += [ax.add_patch(plt.Circle((1.27 / 2, 0), 0.12 / 2, facecolor="gray"))]
+        ball_patches += [ax.add_patch(plt.Circle((-1.27 / 2, 0), 0.12 / 2, facecolor="gray"))]
+
         balls = ball_log[i]
         for ball in balls.values():
             color = getBallColor(ball)
@@ -47,6 +54,7 @@ def animate(balls_to_graph: list[dict[int:Ball]]):
 
     ax.get_yaxis().set_visible(False)
     ax.get_xaxis().set_visible(False)
+    fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=None, hspace=None)
 
     anim = animation.FuncAnimation(
         fig,
@@ -91,10 +99,18 @@ def graph_state(state: State):
     fig, ax = plt.subplots(figsize=(W_TABLE * 4, H_TABLE * 4))
     plt.rcParams["hatch.linewidth"] = 4
 
-    ax.margins(0.3)
-    ax.set_facecolor("green")
+    ax.margins(0.01)
+    ax.patch.set_facecolor("green")
+    fig.patch.set_facecolor("none")
     ax.set_ylim(-H_TABLE / 2, H_TABLE / 2)
     ax.set_xlim(-W_TABLE / 2, W_TABLE / 2)
+    ax.add_patch(plt.Circle((1.27/2, 2.54/2), 0.114, facecolor="gray"))
+    ax.add_patch(plt.Circle((-1.27/2, -2.54/2), 0.114, facecolor="gray"))
+    ax.add_patch(plt.Circle((1.27/2, -2.54/2), 0.114, facecolor="gray"))
+    ax.add_patch(plt.Circle((-1.27/2, 2.54/2), 0.114, facecolor="gray"))
+    ax.add_patch(plt.Circle((1.27/2, 0), 0.12/2, facecolor="gray"))
+    ax.add_patch(plt.Circle((-1.27/2, 0), 0.12/2, facecolor="gray"))
+
 
     for ball in state.balls.values():
         color = getBallColor(ball)
@@ -110,11 +126,13 @@ def graph_state(state: State):
 
         ax.add_patch(plotBall)
 
+    fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=None, hspace=None)
+
     ax.get_yaxis().set_visible(False)
     ax.get_xaxis().set_visible(False)
 
-    file_name = "last_turn.jpg"
-    plt.savefig(file_name, dpi=800)
+    file_name = "prev_turn.jpg"
+    fig.savefig(file_name, dpi=800)
 
     open_visualization(file_name)
 
