@@ -32,12 +32,12 @@ while not game_over:
     
     # output graph
     graph_state(game.running_state)
-    print(f"number of states to be graphed: {len(game.running_state.log)}")
     anim = animate(game.running_state.log)
-    time = datetime.datetime.now()
-    file_name = f"{time.month}-{time.day}--{time.hour}-{time.minute}-{time.second}--animation.mp4"
+    file_name = "replay.mp4"
     video_writer = animation.FFMpegWriter(fps=30)
     anim.save(file_name, writer=video_writer)
+    print("Game is being animated")
+
 
     open_visualization(file_name)
 
