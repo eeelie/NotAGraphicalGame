@@ -9,7 +9,7 @@ from state import State
 
 #what team is ball number ID?    
 def ball_team(ID: int):
-    assert ID >= 0 and ID <= 15, "Not a valid ball ID."
+    if ID < 0 or ID > 15: raise Exception("Not a valid ball ID.")
 
     if ID >= 1 and ID <= 7:
         return "solids"
@@ -25,7 +25,7 @@ def other_player(this_player: int) -> int:
     '''
     returns the id of the other player
     '''
-    assert this_player == 0 or this_player == 1, "not a valid player ID"
+    if this_player != 0 and this_player !=1: raise Exception("not a valid player ID")    
     
     if this_player == 0:
         return 1
@@ -52,10 +52,10 @@ class Game():
         self.players = [Player(player1_name), Player(player2_name)]
         self.current_player_id = random.randint(0,1)
         
-    def start_game(self) -> State:
+    def start_game(self, rand_seed = 1) -> State:
         ''' sets up the start of the game '''
         BALL_RAD = 0.05715/2
-        random.seed(1)
+        random.seed(rand_seed)
         standard_ball_positions = [(0, 0.635), (-0.0286, 0.6846), (0.0288, 0.6848), (-0.0572, 0.7342), (0.00020, 0.7344), (0.0576, 0.7346), (-0.0858, 0.7838), (-0.0284, 0.784), (0.0289, 0.7842), (0.0864, 0.7844), (-0.1144, 0.8334), (-0.057, 0.8336), (0.0004, 0.8338), (0.0578, 0.834), (0.1152, 0.8342)]        
         eight_pos = standard_ball_positions.pop(4)
         cue_pos = (0, -0.635)
