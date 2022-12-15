@@ -82,7 +82,6 @@ class Game():
         random.shuffle(teams)
         for i in range(2):
             self.players[i].assign_team(teams[i])
-            #print(self.players[i].balls_left)
         
         # starting a state object and graphing it
         initial_state = State(game_balls)
@@ -122,9 +121,10 @@ class Game():
         To be ran at the end of each turn of the loop, updates current_player_id
         can assume the first ball pocketed wasnt the eight ball, as pocketing the eight always ends the game
         check for the eight before running this function
-        
-        might break if we somehow get in here and first_ball_team == "eight"
         """
+        # if 8 ball is pocketed, call the winner function
+        if 8 in pocketed:
+            raise Exception("First ball team cannot be the eight ball")
 
         #no balls pocketed
         if len(pocketed) == 0:
