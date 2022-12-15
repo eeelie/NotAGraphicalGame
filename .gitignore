@@ -27,3 +27,7 @@ coverage.xml
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# animation/graph files
+.mp4
+.jpg
