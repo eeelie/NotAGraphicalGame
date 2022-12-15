@@ -157,7 +157,11 @@ class State():
             balls[0] = Ball(0, self.BALL_RADIUS, 0, -0.635, 0, 0)
         balls[0].v = [velocity, np.radians(degrees)]
 
+        counter = 0
+
         while True:
+
+            counter += 1
 
             # steps everything forward one step, modifies velocities, returns updated ball dict
             balls = update_one_step(balls, self.DT, self.ACCELERATION, self.W_TABLE, self.H_TABLE)
@@ -170,8 +174,9 @@ class State():
                 balls.pop(ID)
                 pocketed.append(ID)
             
-            # store this time frame in log
-            log.append(copy.deepcopy(balls))
+            if counter%4 == 0:
+                # store this time frame in log
+                log.append(copy.deepcopy(balls))
 
             # check if all balls have stopped, break if so
             balls_in_motion = 0
