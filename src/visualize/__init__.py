@@ -4,10 +4,9 @@ from ball import Ball
 from state import State
 from functools import partial
 import sys
-from typing import Dict
 
 
-def animate(balls_to_graph: list[Dict[int:Ball]]):
+def animate(balls_to_graph: list[dict]):
     # Create Plot
     W_TABLE = 1.27
     H_TABLE = 2.54
