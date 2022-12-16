@@ -79,7 +79,12 @@ def test_team_names():
 def test_bad_team_name():
     with raises(Exception):
         bad_ball = Ball(-1, 0.5, 0, 0, 0, 0)
+    with raises(Exception):
         bad_ball2 = Ball(18, 0.5, 0, 0, 0, 0)
+    with raises(Exception):
+        bad_ball3 = Ball(1.1, 0.5, 0, 0, 0, 0)
+    with raises(Exception):
+        bad_ball4 = Ball("one", 0.5, 0, 0, 0, 0)
 
 
 def test_in_pocket():

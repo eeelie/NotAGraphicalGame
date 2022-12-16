@@ -33,6 +33,8 @@ class Ball:
         "returns team name based on ball ID"
         if self.ID < 0 or self.ID > 15:
             raise Exception("Not a valid ball ID.")
+        if type(self.ID) != int:
+            raise Exception("Not a valid ball ID.")
         if self.ID >= 1 and self.ID <= 7:
             return "solid"
         elif self.ID >= 9 and self.ID <= 15:
