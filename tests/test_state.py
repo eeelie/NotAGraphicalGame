@@ -103,7 +103,46 @@ def test_post_collision_velocities():
     assert v_b2[1] == approx(3*np.pi/4)
     assert v_a3[1] == approx(np.pi/12)
     assert v_b3[1] == approx(np.pi)
-    
+
+def test_update_one_step():
+    moving_balls = {
+        0: Ball(0, RADIUS, 0, 0, 0, 0),
+        1: Ball(1, RADIUS, RADIUS*3, 0, 1, np.pi/2),
+        2: Ball(2, RADIUS, -RADIUS*3, 0, 0.0005, np.pi/2),
+        3: Ball(3, RADIUS, 0, (2*RADIUS)-0.001, 1, -np.pi/2)
+    }
+    moving_balls = update_one_step(moving_balls, 0.01, 0, 1.27, 2.54, 0.7)
+    assert moving_balls[1].p[1] == approx(0.01)
+    assert moving_balls[1].v[0] == 1
+    assert moving_balls[1].v[1] == approx(np.pi/2)
+    assert moving_balls[2].v[0] == 0.0
+    assert moving_balls[2].p[1] == 0.0
+    assert moving_balls[0].p[1] == 0.0
+    assert moving_balls[3].p[1] == approx((2*RADIUS)-0.011)
+    assert moving_balls[3].v[0] == approx(0.0)
+    assert moving_balls[0].v[0] == approx(1)
+    assert moving_balls[0].v[1] == approx(-np.pi/2)
+
+def test_wall_collision():
+    w = 1.27
+    h = 2.54
+    damp = 0.7
+    balls_at_walls = {
+        0: Ball(0, RADIUS, w/2-RADIUS+0.001, h/2, 5, np.pi/6),
+        1: Ball(1, RADIUS, -w/2+RADIUS-0.001, h/2, 5, 3*np.pi/4),
+        2: Ball(2, RADIUS, 0, h/2-RADIUS+0.001, 5, -np.pi/3),
+        3: Ball(3, RADIUS, 0, -h/2+RADIUS-0.001, 5, -np.pi/3)
+    }
+    balls_at_walls = update_one_step(balls_at_walls, 0.01, 0, w, h, damp)
+    assert balls_at_walls[0].v[0] == approx(5*damp)
+    assert balls_at_walls[0].v[1] == approx(5*np.pi/6)
+    assert balls_at_walls[1].v[0] == approx(5*damp)
+    assert balls_at_walls[1].v[1] == approx(np.pi/4)
+    assert balls_at_walls[2].v[0] == approx(5)
+    assert balls_at_walls[2].v[1] == approx(-np.pi/3)
+    assert balls_at_walls[3].v[0] == approx(5*damp)
+    assert balls_at_walls[3].v[1] == approx(np.pi/3)
+
 def test_update_reset_cue():
     balls_no_cue = {
         1: Ball(1,RADIUS,0.2,0,0,0),
