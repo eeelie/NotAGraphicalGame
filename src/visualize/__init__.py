@@ -1,3 +1,5 @@
+
+from __future__  import annotations
 import matplotlib.pyplot as plt
 from matplotlib import animation
 from ball import Ball
@@ -5,49 +7,36 @@ from state import State
 from functools import partial
 import sys
 
-
-def animate(balls_to_graph: list[dict]):
+def animate(balls_to_graph: list[dict[int: Ball]]):
     # Create Plot
     W_TABLE = 1.27
     H_TABLE = 2.54
-    fig, ax = plt.subplots(figsize=(W_TABLE * 4, H_TABLE * 4))
+    fig, ax = plt.subplots(figsize=(W_TABLE*4,H_TABLE*4))
     plt.rcParams["hatch.linewidth"] = 4
 
     ax.margins(0.3)
     ax.set_facecolor("green")
-    ax.set_ylim(-H_TABLE / 2, H_TABLE / 2)
-    ax.set_xlim(-W_TABLE / 2, W_TABLE / 2)
+    ax.set_ylim(-H_TABLE/2, H_TABLE/2)
+    ax.set_xlim(-W_TABLE/2, W_TABLE/2)
 
     def init():
         ball_patches = []
         return []
 
-    def graph(i, ball_log: list[dict[int:Ball]]):
-        for circle in ax.findobj(match=type(ax.add_patch(plt.Circle((0, 0), 5)))):
+    def graph(i, ball_log: list[dict[int: Ball]]):
+        for circle in ax.findobj(match = type(ax.add_patch(plt.Circle((0,0), 5)))):
             circle.remove()
         ball_patches = []
 
-        # Adding Pocket References
-        ball_patches += [
-            ax.add_patch(plt.Circle((1.27 / 2, 2.54 / 2), 0.114, facecolor="gray"))
-        ]
-        ball_patches += [
-            ax.add_patch(plt.Circle((-1.27 / 2, -2.54 / 2), 0.114, facecolor="gray"))
-        ]
-        ball_patches += [
-            ax.add_patch(plt.Circle((1.27 / 2, -2.54 / 2), 0.114, facecolor="gray"))
-        ]
-        ball_patches += [
-            ax.add_patch(plt.Circle((-1.27 / 2, 2.54 / 2), 0.114, facecolor="gray"))
-        ]
-        ball_patches += [
-            ax.add_patch(plt.Circle((1.27 / 2, 0), 0.12 / 2, facecolor="gray"))
-        ]
-        ball_patches += [
-            ax.add_patch(plt.Circle((-1.27 / 2, 0), 0.12 / 2, facecolor="gray"))
-        ]
+        #Adding Pocket References
+        ball_patches += [ax.add_patch(plt.Circle((1.27 / 2, 2.54 / 2), 0.114, facecolor="gray"))]
+        ball_patches += [ax.add_patch(plt.Circle((-1.27 / 2, -2.54 / 2), 0.114, facecolor="gray"))]
+        ball_patches += [ax.add_patch(plt.Circle((1.27 / 2, -2.54 / 2), 0.114, facecolor="gray"))]
+        ball_patches += [ax.add_patch(plt.Circle((-1.27 / 2, 2.54 / 2), 0.114, facecolor="gray"))]
+        ball_patches += [ax.add_patch(plt.Circle((1.27 / 2, 0), 0.12 / 2, facecolor="gray"))]
+        ball_patches += [ax.add_patch(plt.Circle((-1.27 / 2, 0), 0.12 / 2, facecolor="gray"))]
 
-        # Add cue patch
+        #Add cue patch
         ax.add_patch(plt.Circle((0, -0.635), 0.02, facecolor="tan"))
 
         balls = ball_log[i]
@@ -56,13 +45,9 @@ def animate(balls_to_graph: list[dict]):
             ball_patches = []
 
             if ball.team == "stripe":
-                plotBall = plt.Circle(
-                    ball.p, ball.radius, facecolor=color, edgecolor="white", hatch=r"-"
-                )
+                plotBall = plt.Circle(ball.p, ball.radius, facecolor= color, edgecolor ="white", hatch =r"-")
             else:
-                plotBall = plt.Circle(
-                    ball.p, ball.radius, facecolor=color, edgecolor="white"
-                )
+                plotBall = plt.Circle(ball.p, ball.radius, facecolor= color, edgecolor ="white")
 
             ball_patches += [ax.add_patch(plotBall)]
 
@@ -70,77 +55,47 @@ def animate(balls_to_graph: list[dict]):
 
     ax.get_yaxis().set_visible(False)
     ax.get_xaxis().set_visible(False)
-    fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=None, hspace=None)
+    fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=None,hspace=None)
 
-    anim = animation.FuncAnimation(
-        fig,
-        partial(graph, ball_log=balls_to_graph),
-        init_func=init,
-        frames=len(balls_to_graph),
-        interval=100,
-        blit=True,
-    )
+    anim = animation.FuncAnimation(fig, partial(graph, ball_log=balls_to_graph), init_func=init, frames=len(balls_to_graph), interval=100, blit=True)
 
     return anim
 
-
 # Get Ball Color for Plot
 def getBallColor(ball: Ball) -> str:
-    colors = {
-        0: "white",
-        1: "yellow",
-        2: "blue",
-        3: "red",
-        4: "purple",
-        5: "darkorange",
-        6: "limegreen",
-        7: "brown",
-        8: "black",
-        9: "yellow",
-        10: "blue",
-        11: "red",
-        12: "purple",
-        13: "darkorange",
-        14: "limegreen",
-        15: "brown",
-    }
+    colors = {0: "white", 1: "yellow", 2: "blue", 3: "red", 4: "purple", 5: "darkorange",6: "limegreen", 7: "brown", 8: "black", 9: "yellow", 10: "blue", 11: "red", 12: "purple", 13: "darkorange", 14: "limegreen", 15: "brown"}
 
     return colors.get(ball.ID)
-
 
 def graph_state(state: State):
     # Create Plot
     W_TABLE = 1.27
     H_TABLE = 2.54
-    fig, ax = plt.subplots(figsize=(W_TABLE * 4, H_TABLE * 4))
+    fig, ax = plt.subplots(figsize=(W_TABLE*4,H_TABLE*4))
     plt.rcParams["hatch.linewidth"] = 4
 
     ax.margins(0.1)
     ax.set_facecolor("green")
-    ax.set_ylim(-H_TABLE / 2, H_TABLE / 2)
-    ax.set_xlim(-W_TABLE / 2, W_TABLE / 2)
+    ax.set_ylim(-H_TABLE/2, H_TABLE/2)
+    ax.set_xlim(-W_TABLE/2, W_TABLE/2)
 
-    # Adding Pocket References
-    ax.add_patch(plt.Circle((1.27 / 2, 2.54 / 2), 0.114, facecolor="gray"))
-    ax.add_patch(plt.Circle((-1.27 / 2, -2.54 / 2), 0.114, facecolor="gray"))
-    ax.add_patch(plt.Circle((1.27 / 2, -2.54 / 2), 0.114, facecolor="gray"))
-    ax.add_patch(plt.Circle((-1.27 / 2, 2.54 / 2), 0.114, facecolor="gray"))
-    ax.add_patch(plt.Circle((1.27 / 2, 0), 0.12 / 2, facecolor="gray"))
-    ax.add_patch(plt.Circle((-1.27 / 2, 0), 0.12 / 2, facecolor="gray"))
+    #Adding Pocket References
+    ax.add_patch(plt.Circle((1.27/2, 2.54/2), 0.114, facecolor="gray"))
+    ax.add_patch(plt.Circle((-1.27/2, -2.54/2), 0.114, facecolor="gray"))
+    ax.add_patch(plt.Circle((1.27/2, -2.54/2), 0.114, facecolor="gray"))
+    ax.add_patch(plt.Circle((-1.27/2, 2.54/2), 0.114, facecolor="gray"))
+    ax.add_patch(plt.Circle((1.27/2, 0), 0.12/2, facecolor="gray"))
+    ax.add_patch(plt.Circle((-1.27/2, 0), 0.12/2, facecolor="gray"))
 
     for ball in state.balls.values():
-        color = getBallColor(ball)
+         color = getBallColor(ball)
 
-        if ball.team == "stripe":
-            plotBall = plt.Circle(
-                ball.p, ball.radius, facecolor=color, edgecolor="white", hatch=r"-"
-            )
-        else:
-            plotBall = plt.Circle(
-                ball.p, ball.radius, facecolor=color, edgecolor="white"
-            )
+         if ball.team == "stripe":
+             plotBall = plt.Circle(ball.p, ball.radius, facecolor= color, edgecolor ="white", hatch =r"-")
+         else:
+             plotBall = plt.Circle(ball.p, ball.radius, facecolor= color, edgecolor ="white")
 
-        ax.add_patch(plotBall)
+         ax.add_patch(plotBall)
 
     fig.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=None, hspace=None)
 
@@ -148,7 +103,6 @@ def graph_state(state: State):
     ax.get_xaxis().set_visible(False)
 
     return fig
-
 
 def open_visualization(file_name: str):
     if sys.platform == "win32":
