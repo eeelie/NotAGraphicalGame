@@ -7,7 +7,7 @@ player2_name = input("Player 2, what's your name?")
 
 game = Game(player1_name, player2_name)
 game.start_game()
-graph_state(game.running_state)
+open_visualization("game_start.jpg")
 
 print(f"{player1_name}, your team is {game.players[0].team}")
 print(f"{player2_name}, your team is {game.players[1].team}")
