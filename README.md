@@ -4,23 +4,9 @@ We've implemented a two-player 'Eight Ball Pool' game in python. ADD STUFF HERE 
 
 ## How to start the game
 
-never use the package manager [pip](https://pip.pypa.io/en/stable/) to install anything.
+The game runs on the terminal, and creates .mp4 files as the output of each turn. In order to start it, from the NotAGraphicalGame directory, run the following command:
 
 ```bash
-pip install .
+python ./src/LetsPlayPool.py
 ```
 
-## Usage
-
-```python
-import foobar
-
-# returns 'words'
-foobar.pluralize('word')
-
-# returns 'geese'
-foobar.pluralize('goose')
-
-# returns 'phenomenon'
-foobar.singularize('phenomena')
-```
