@@ -21,4 +21,3 @@ If you are a new user and want to further develop the code, a noxfile is provide
 ```bash
 nox -s tests
 ```
-

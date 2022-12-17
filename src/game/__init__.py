@@ -35,9 +35,9 @@ def other_player(this_player: int) -> int:
 
 
 def take_input():
-    force = float(input("Input a velocity in m/s"))
+    velocity = float(input("Input a velocity in m/s"))
     angle = float(input("Input an angle in degrees"))
-    return force, angle
+    return velocity, angle
 
 
 @dataclasses.dataclass
