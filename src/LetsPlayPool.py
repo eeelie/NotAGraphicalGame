@@ -5,12 +5,13 @@ import matplotlib.pyplot as plt
 from game import *
 from visualize import *
 import datetime
+import time
 
 player1_name = input("Player 1, what's your name?")
 player2_name = input("Player 2, what's your name?")
 
 game = Game(player1_name, player2_name)
-game.start_game()
+game.start_game(time.time())
 start_fig = graph_state(game.running_state)
 plt.savefig("start_fig.jpg")
 open_visualization("start_fig.jpg")
