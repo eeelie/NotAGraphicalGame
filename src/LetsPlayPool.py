@@ -1,12 +1,13 @@
 from __future__ import annotations
 from game import *
 from visualize import *
+import time
 
-player1_name = input("Player 1, what's your name?")
-player2_name = input("Player 2, what's your name?")
+player1_name = input("Player 1, what's your name? ")
+player2_name = input("Player 2, what's your name? ")
 
 game = Game(player1_name, player2_name)
-game.start_game()
+game.start_game(time.time())
 open_visualization("game_start.jpg")
 
 print(f"{player1_name}, your team is {game.players[0].team}")
