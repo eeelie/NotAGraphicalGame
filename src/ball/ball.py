@@ -28,44 +28,24 @@ class BallTeam(Enum):
 
 @dataclasses.dataclass
 class Ball:
-    ID: int
-    radius: float
-    p: list[float, float]
-    v: list[float, float]
-    team: str
 
     def __init__(
         self,
-        ID: int,
+        ball_id: int,
         radius: float,
         x_0: float,
         y_0: float,
         v_mag: float,
         v_radians: float,
     ):
-        self.ID = ID
+        self.id = ball_id
         self.radius = radius
         self.p = [x_0, y_0]
         self.v = [v_mag, v_radians]
-        self.team = self.team_name()
+        self.team = BallTeam.from_id(self.id)
 
     def __copy__(self):
-        return Ball(self.ID, self.radius, self.p[0], self.p[1], self.v[0], self.v[1])
-
-    def team_name(self) -> str:
-        "returns team name based on ball ID"
-        if self.ID < 0 or self.ID > 15:
-            raise Exception("Not a valid ball ID.")
-        if type(self.ID) != int:
-            raise Exception("Not a valid ball ID.")
-        if self.ID >= 1 and self.ID <= 7:
-            return "solid"
-        elif self.ID >= 9 and self.ID <= 15:
-            return "stripe"
-        elif self.ID == 8:
-            return "eight"
-        elif self.ID == 0:
-            return "cue"
+        return Ball(self.id, self.radius, self.p[0], self.p[1], self.v[0], self.v[1])
 
     def time_step(self, dt: float, acc: float):
         "new implementation: steps forward position and velocity of ball and stops ball if v is suficiently small"
