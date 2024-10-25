@@ -1,8 +1,8 @@
-from game import Game
-from visualize import graph_state
 import pytest
 from pytest import raises
 
+from src.game.game import Game
+from src.visualize.visualize import graph_state
 
 def start_game_graph():
     game = Game("A", "B")

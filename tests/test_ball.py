@@ -1,4 +1,4 @@
-from ball import Ball
+from ball.ball import Ball
 from pytest import approx
 from pytest import raises
 import numpy as np

@@ -1,4 +1,4 @@
-from player import *
+from src.player.player import Player
 from pytest import raises
 
 

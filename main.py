@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 
-from game import *
-from visualize import *
+from src.game.game import Game, take_input
+from src.visualize.visualize import graph_state, open_visualization, animate, animation
 import datetime
 import time
 

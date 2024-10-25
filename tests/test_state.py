@@ -1,5 +1,5 @@
-from ball import Ball
-from state import *
+from src.ball.ball import Ball
+from src.state.state import State, find_collision_angle, rotate_p_and_v, collision_confirmed, post_collision_velocities, update_one_step
 from pytest import approx
 from pytest import raises
 import numpy as np

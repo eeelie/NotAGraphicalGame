@@ -1,5 +1,10 @@
-from game import *
 from pytest import raises
+import random
+
+from src.game.game import ball_team, other_player, Game
+from src.player.player import Player
+from src.state.state import State
+from src.ball.ball import Ball
 
 
 def test_ball_team():
