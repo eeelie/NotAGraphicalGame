@@ -33,5 +33,5 @@ coverage.xml
 dmypy.json
 
 # animation/graph files
-.mp4
-.jpg
+*.mp4
+*.jpg
