@@ -5,7 +5,7 @@ from functools import partial
 import sys
 
 from src.ball.ball import Ball
-from src.state.state import State
+from game_logic.game_state import GameState
 
 
 def animate(balls_to_graph: list[dict[int:Ball]]):
@@ -107,10 +107,10 @@ def getBallColor(ball: Ball) -> str:
         15: "brown",
     }
 
-    return colors.get(ball.ID)
+    return colors.get(ball.id)
 
 
-def graph_state(state: State):
+def graph_state(state: GameState):
     # Create Plot
     W_TABLE = 1.27
     H_TABLE = 2.54

@@ -1,5 +1,5 @@
 from src.ball.ball import Ball
-from src.state.state import State, find_collision_angle, rotate_p_and_v, collision_confirmed, post_collision_velocities, update_one_step
+from game_logic.game_state import GameState, find_collision_angle, rotate_p_and_v, collision_confirmed, post_collision_velocities, update_one_step
 from pytest import approx
 from pytest import raises
 import numpy as np
@@ -19,14 +19,14 @@ balls = {
 
 
 def test_constructor():
-    S = State(balls)
+    S = GameState(balls)
     assert S.balls == balls
     assert S.balls[0] == Ball(0, RADIUS, 0, 0, 0, 0)
     assert S.balls[0].p[0] == 0
 
 
 def test_modify_simulation_constants():
-    S = State(balls)
+    S = GameState(balls)
     S.modify_simulation_constants(0.02, 0.015, 0.8)
     assert S.DT == approx(0.02)
     assert S.ACCELERATION == approx(0.015)
@@ -156,13 +156,13 @@ def test_update_reset_cue():
         1: Ball(1, RADIUS, 0.2, 0, 0, 0),
         2: Ball(2, RADIUS, 0.2, 0.2, 0, 0),
     }
-    S = State(balls_no_cue)
+    S = GameState(balls_no_cue)
     S.update(0, 0)
     assert 0 in S.balls.keys()
 
 
 def test_update_simple():
-    S = State(balls)
+    S = GameState(balls)
     S.update(1, 0)
     assert 0 in S.balls.keys()
     assert 1 not in S.balls.keys()

@@ -2,56 +2,37 @@
 from __future__ import annotations
 import random
 import dataclasses
-from src.player.player import Player
-from src.ball.ball import Ball, BallTeam
-from src.state.state import State
-
-def other_player(this_player: int) -> int:
-    '''
-    returns the id of the other player
-    '''
-    if this_player != 0 and this_player !=1: raise Exception("not a valid player ID")    
-    
-    if this_player == 0:
-        return 1
-    if this_player == 1:
-        return 0
-    
-def take_input():
-    velocity = float(input("Input a velocity in m/s"))
-    angle = float(input("Input an angle in degrees"))
-    return velocity, angle
-    
+from src.player.player import Player, PlayerID
+from src.ball.ball import Ball
+from game_logic.team import Team
+from game_logic.game_state import GameState
+from src.game_logic.start_positions import BALL_START_POSITIONS
 
 @dataclasses.dataclass
-class Game():
-    '''
-    Assuming I can receive a list of balls pocketed from State
-    and the dict with all balls still in play, which shouldnt be necessary
-    '''
+class GameLoop():
     players: list[Player, Player]
-    running_state: State
-    current_player_id: int #0 or 1
+    running_state: GameState
+    current_player_id: PlayerID
     
-    def __init__(self, player1_name: str, player2_name: str):        
-        self.players = [Player(player1_name), Player(player2_name)]
-        self.current_player_id = random.randint(0,1)
+    def __init__(self, player_names:list[str]):
+        self.players = [Player(player_names[0], 0), Player(player_names[1], 1)]
+        self.current_player_id = PlayerID.random()
         
-    def start_game(self, rand_seed: int = 1) -> State:
+    def start_game(self, rand_seed: int = 1) -> GameState:
         ''' sets up the start of the game '''
         BALL_RAD = 0.05715/2
         random.seed(rand_seed)
-        standard_ball_positions = [(0, 0.635), (-0.0286, 0.6846), (0.0288, 0.6848), (-0.0572, 0.7342), (0.00020, 0.7344), (0.0576, 0.7346), (-0.0858, 0.7838), (-0.0284, 0.784), (0.0289, 0.7842), (0.0864, 0.7844), (-0.1144, 0.8334), (-0.057, 0.8336), (0.0004, 0.8338), (0.0578, 0.834), (0.1152, 0.8342)]        
-        eight_pos = standard_ball_positions.pop(4)
+        ball_start_positions = BALL_START_POSITIONS
+        eight_pos = ball_start_positions.pop(4)
         cue_pos = (0, -0.635)
         
         # randomize ball positions
-        random.shuffle(standard_ball_positions)
+        random.shuffle(ball_start_positions)
 
         # create ball objects
         game_balls = {}
         i = 0
-        for coords in standard_ball_positions:
+        for coords in ball_start_positions:
             if i == 0:
                 game_balls[i] = Ball(i, BALL_RAD, cue_pos[0], cue_pos[1], 0, 0)
                 i += 1
@@ -63,14 +44,14 @@ class Game():
             i += 1
             
         # assign a team to each player
-        teams = ["stripes", "solids"]
+        teams = [Team.STRIPED, Team.SOLID]
         random.shuffle(teams)
-        for i in range(2):
-            self.players[i].assign_team(teams[i])
+        for player in self.players:
+            player.assign_team(teams.pop())
         
         # starting a state object
-        initial_state = State(game_balls)
-        self.running_state = initial_state   
+        initial_state = GameState(game_balls)
+        self.running_state = initial_state
         
     def current_player_name(self) -> str:
         ''' returns the current player's name '''
@@ -95,9 +76,9 @@ class Game():
             if 0 not in self.pocketed_this_turn():
                 return  self.players[self.current_player_id].name
             else:
-                return self.players[other_player(self.current_player_id)].name                
+                return self.players[Player.get_opponent_id(self.current_player_id)].name                
         else:
-            return self.players[other_player(self.current_player_id)].name  
+            return self.players[Player.get_opponent_id(self.current_player_id)].name  
         
     
     def next_player(self, pocketed: list[int]) -> int:
@@ -106,23 +87,22 @@ class Game():
         can assume the first ball pocketed wasnt the eight ball, as pocketing the eight always ends the game
         check for the eight before running this function
         """
-        # if 8 ball is pocketed, call the winner function
+        # if 8 ball is pocketed, we should never get here, see GameSession.play()
         if 8 in pocketed:
-            raise Exception("First ball team cannot be the eight ball")
+            raise Exception("First ball cannot be the eight ball")
 
         #no balls pocketed
         if len(pocketed) == 0:
-            return other_player(self.current_player_id)
-            
-        first_ball_team = ball_team(pocketed[0])
-                   
+            return Player.get_opponent_id(self.current_player_id)
+
         # cue pocket scratch
         if 0 in pocketed:
-            return other_player(self.current_player_id)
-        
+            return Player.get_opponent_id(self.current_player_id)
+
         # wrong ball scratch
+        first_ball_team = Team.from_id(pocketed[0])
         if self.players[self.current_player_id].team != first_ball_team:
-            return other_player(self.current_player_id)
+            return Player.get_opponent_id(self.current_player_id)
         
         # else case: if the self.players[current_player_id].team == first_ball_team, 
         # then keep current-player the same

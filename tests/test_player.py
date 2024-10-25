@@ -1,5 +1,6 @@
 from src.player.player import Player
 from pytest import raises
+from team import Team
 
 
 def test_constructor():
@@ -19,11 +20,11 @@ def test_constructor():
 def test_assign_team():
     player1 = Player("Elie")
     player2 = Player("Jack")
-    player1.assign_team("stripes")
-    player2.assign_team("solids")
+    player1.assign_team(Team.STRIPED)
+    player2.assign_team(Team.SOLID)
 
-    assert player1.team == "stripes"
-    assert player2.team == "solids"
+    assert player1.team == Team.STRIPED
+    assert player2.team == Team.SOLID
 
     assert player1.balls_left == [9, 10, 11, 12, 13, 14, 15]
     assert player2.balls_left == [1, 2, 3, 4, 5, 6, 7]
@@ -40,8 +41,8 @@ def test_update_balls_left():
     player1 = Player("Jose")
     player2 = Player("Elie")
     player3 = Player("Jack")
-    player1.assign_team("solids")
-    player2.assign_team("stripes")
+    player1.assign_team(Team.SOLID)
+    player2.assign_team(Team.STRIPED)
 
     assert player1.balls_left == [1, 2, 3, 4, 5, 6, 7]
     assert player2.balls_left == [9, 10, 11, 12, 13, 14, 15]

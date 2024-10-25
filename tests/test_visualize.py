@@ -1,11 +1,11 @@
 import pytest
 from pytest import raises
 
-from src.game.game import Game
+from game_logic.game_loop import GameLoop
 from src.visualize.visualize import graph_state
 
 def start_game_graph():
-    game = Game("A", "B")
+    game = GameLoop("A", "B")
     game.start_game()
     return game
 

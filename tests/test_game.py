@@ -1,9 +1,9 @@
 from pytest import raises
 import random
 
-from src.game.game import ball_team, other_player, Game
+from game_logic.game_loop import ball_team, get_opponent_id, GameLoop
 from src.player.player import Player
-from src.state.state import State
+from game_logic.game_state import GameState
 from src.ball.ball import Ball
 
 
@@ -40,27 +40,27 @@ def test_ball_team_random():
 
 
 def test_other_player():
-    assert other_player(1) == 0
-    assert other_player(0) == 1
+    assert get_opponent_id(1) == 0
+    assert get_opponent_id(0) == 1
 
 
 def test_bad_other_player():
     with raises(Exception):
-        other_player(3)
-        other_player("one")
-        other_player()
+        get_opponent_id(3)
+        get_opponent_id("one")
+        get_opponent_id()
 
 
 def test_other_player_random():
     for i in range(20):
         player = random.randint(-5, 5)
         if player == 1:
-            assert other_player(player) == 0
+            assert get_opponent_id(player) == 0
         elif player == 0:
-            assert other_player(0) == 1
+            assert get_opponent_id(0) == 1
         else:
             with raises(Exception):
-                other_player(player)
+                get_opponent_id(player)
 
 
 def test_take_input_force(monkeypatch):
@@ -70,7 +70,7 @@ def test_take_input_force(monkeypatch):
 
 
 def test_constructor():
-    game1 = Game("Hayden", "Jose")
+    game1 = GameLoop("Hayden", "Jose")
 
     assert game1.players == [Player("Hayden"), Player("Jose")]
 
@@ -105,14 +105,14 @@ def test_start_game():
         14: Ball(14, 0.028575, -0.1144, 0.8334, 0, 0),
         15: Ball(15, 0.028575, 0.0288, 0.6848, 0, 0),
     }
-    game1 = Game("Hayden", "Jose")
+    game1 = GameLoop("Hayden", "Jose")
     game1.start_game(1)
 
-    assert game1.running_state == State(ball_dict)
+    assert game1.running_state == GameState(ball_dict)
 
 
 def test_current_player_name():
-    game1 = Game("Jack", "Elie")
+    game1 = GameLoop("Jack", "Elie")
     game1.start_game()
     ID = game1.current_player_id
     if ID == 0:
@@ -122,7 +122,7 @@ def test_current_player_name():
 
 
 def test_update_state():
-    game1 = Game("Elie", "Jose")
+    game1 = GameLoop("Elie", "Jose")
     game1.start_game(1)
 
     ball_dict = {
@@ -143,7 +143,7 @@ def test_update_state():
         14: Ball(14, 0.028575, -0.1144, 0.8334, 0, 0),
         15: Ball(15, 0.028575, 0.0288, 0.6848, 0, 0),
     }
-    state1 = State(ball_dict)
+    state1 = GameState(ball_dict)
 
     for i in range(20):
         velocity = round(random.uniform(0.0, 5.0), 2)
@@ -154,7 +154,7 @@ def test_update_state():
 
 
 def test_pocketed_this_turn():
-    game1 = Game("Elie", "Jose")
+    game1 = GameLoop("Elie", "Jose")
     game1.start_game(1)
 
     assert game1.pocketed_this_turn() == []
@@ -167,7 +167,7 @@ def test_pocketed_this_turn():
         game1.running_state.pocketed = [rand_ball]
         assert game1.pocketed_this_turn() == [rand_ball]
 
-    game2 = Game("Hayden", "Jack")
+    game2 = GameLoop("Hayden", "Jack")
     game2.start_game(1)
     ball_dict = {
         0: Ball(0, 0.028575, 0, -0.635, 0, 0),
@@ -187,7 +187,7 @@ def test_pocketed_this_turn():
         14: Ball(14, 0.028575, -0.1144, 0.8334, 0, 0),
         15: Ball(15, 0.028575, 0.0288, 0.6848, 0, 0),
     }
-    state1 = State(ball_dict)
+    state1 = GameState(ball_dict)
 
     for i in range(20):
         velocity = round(random.uniform(0.0, 5.0), 2)
@@ -198,7 +198,7 @@ def test_pocketed_this_turn():
 
 
 def test_update_players():
-    game1 = Game("Elie", "Jose")
+    game1 = GameLoop("Elie", "Jose")
     game1.start_game(1)
 
     game1.running_state.pocketed = [2, 7, 10]
@@ -213,7 +213,7 @@ def test_update_players():
 
 def test_winner():
     # Player 0 sinks 8 ball, but still has balls left; Player 1 not down to 8 -> Player 1 wins
-    game1 = Game("Jack", "Jose")
+    game1 = GameLoop("Jack", "Jose")
     game1.start_game(1)
     game1.current_player_id = 0
     game1.running_state.pocketed = [8]
@@ -221,7 +221,7 @@ def test_winner():
     assert game1.winner() == "Jose"
 
     # Player 0 sinks 8 ball, but still has balls left; Player 1 down to 8 -> Player 1 wins
-    game2 = Game("Jack", "Jose")
+    game2 = GameLoop("Jack", "Jose")
     game2.start_game(1)
     game2.current_player_id = 0
     game2.running_state.pocketed = [8]
@@ -229,14 +229,14 @@ def test_winner():
     assert game2.winner() == "Jose"
 
     # Player 1 sinks 8 ball, but still has balls left -> Player 0 wins
-    game3 = Game("Jack", "Jose")
+    game3 = GameLoop("Jack", "Jose")
     game3.start_game(1)
     game3.current_player_id = 1
     game3.running_state.pocketed = [8]
     assert game3.winner() == "Jack"
 
     # Player 0 down to 8, sinks 8 ball -> Player 0 wins
-    game4 = Game("Jack", "Jose")
+    game4 = GameLoop("Jack", "Jose")
     game4.start_game(1)
     game4.current_player_id = 0
     game4.players[0].down_to_the_eight = True
@@ -244,7 +244,7 @@ def test_winner():
     assert game4.winner() == "Jack"
 
     # Player 1 down to 8, sinks 8 ball -> Player 1 wins
-    game5 = Game("Jack", "Jose")
+    game5 = GameLoop("Jack", "Jose")
     game5.start_game(1)
     game5.current_player_id = 1
     game5.players[1].down_to_the_eight = True
@@ -252,14 +252,14 @@ def test_winner():
     assert game5.winner() == "Jose"
 
     # Player 0 down to 8, sinks 8 ball and cue -> Player 1 wins
-    game6 = Game("Jack", "Jose")
+    game6 = GameLoop("Jack", "Jose")
     game6.start_game(1)
     game6.current_player_id = 0
     game6.players[0].down_to_the_eight = True
     game6.running_state.pocketed = [0, 8]
     assert game6.winner() == "Jose"
 
-    game7 = Game("Jack", "Jose")
+    game7 = GameLoop("Jack", "Jose")
     game7.start_game(1)
     game7.current_player_id = 0
     game7.players[0].down_to_the_eight = True
@@ -267,7 +267,7 @@ def test_winner():
     assert game7.winner() == "Jose"
 
     # Player 1 down to 8, sinks 8 ball and cue -> Player 0 wins
-    game8 = Game("Jack", "Jose")
+    game8 = GameLoop("Jack", "Jose")
     game8.start_game(1)
     game8.current_player_id = 1
     game8.players[1].down_to_the_eight = True
@@ -278,37 +278,37 @@ def test_winner():
 def test_next_player():
 
     # No balls pocketed -> current player switches
-    game1 = Game("Hayden", "Jose")
+    game1 = GameLoop("Hayden", "Jose")
     game1.start_game(1)
     assert game1.current_player_id == 1
     assert game1.next_player([]) == 0
 
-    game2 = Game("Hayden", "Jose")
+    game2 = GameLoop("Hayden", "Jose")
     game2.start_game(1)
     game2.current_player_id = 0
     assert game2.current_player_id == 0
     assert game2.next_player([]) == 1
 
     # Cue ball pocketed -> current player switches
-    game3 = Game("Hayden", "Jose")
+    game3 = GameLoop("Hayden", "Jose")
     game3.start_game(1)
     assert game3.current_player_id == 1
     assert game3.next_player([0]) == 0
 
-    game4 = Game("Hayden", "Jose")
+    game4 = GameLoop("Hayden", "Jose")
     game4.start_game(1)
     game4.current_player_id = 0
     assert game4.current_player_id == 0
     assert game4.next_player([0]) == 1
 
     # Wrong ball pocketed -> current player switches
-    game5 = Game("Hayden", "Jose")
+    game5 = GameLoop("Hayden", "Jose")
     game5.start_game(1)
     assert game5.current_player_id == 1
     assert game5.players[game5.current_player_id].team == "stripes"
     assert game5.next_player([2]) == 0
 
-    game6 = Game("Hayden", "Jose")
+    game6 = GameLoop("Hayden", "Jose")
     game6.start_game(1)
     game6.current_player_id = 0
     assert game6.current_player_id == 0
@@ -316,13 +316,13 @@ def test_next_player():
     assert game6.next_player([11]) == 1
 
     # Correct ball pocketed -> current player plays again
-    game7 = Game("Hayden", "Jose")
+    game7 = GameLoop("Hayden", "Jose")
     game7.start_game(1)
     assert game7.current_player_id == 1
     assert game7.players[game7.current_player_id].team == "stripes"
     assert game7.next_player([2]) == 0
 
-    game8 = Game("Hayden", "Jose")
+    game8 = GameLoop("Hayden", "Jose")
     game8.start_game(1)
     game8.current_player_id = 0
     assert game8.current_player_id == 0
@@ -330,7 +330,7 @@ def test_next_player():
     assert game8.next_player([11]) == 1
 
     # 8 ball pocketed -> Exception raised
-    game9 = Game("Hayden", "Jose")
+    game9 = GameLoop("Hayden", "Jose")
     game9.start_game(1)
     with raises(Exception):
         game9.next_player([8]) == 0

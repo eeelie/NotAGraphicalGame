@@ -3,15 +3,17 @@ from pytest import approx
 from pytest import raises
 import numpy as np
 
+from game_logic.team import Team
+
 
 def test_constructor():
     ball1 = Ball(1, 0.5, 0.3, -0.4, 1, np.pi / 2)
 
-    assert ball1.ID == 1
+    assert ball1.id == 1
     assert ball1.radius == 0.5
     assert ball1.p == [0.3, -0.4]
     assert ball1.v == [1, np.pi / 2]
-    assert ball1.team == "solid"
+    assert ball1.team == Team.Sol
 
 
 def test_time_step():

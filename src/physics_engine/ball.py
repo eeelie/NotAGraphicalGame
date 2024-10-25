@@ -1,32 +1,8 @@
 from __future__ import annotations
 import numpy as np
-import dataclasses
-from enum import Enum
 
-class BallTeam(Enum):
-    SOLID = "solid"
-    STRIPED = "striped"
-    EIGHT = "eight"
-    CUE = "cue"
+from game_logic.team import Team
 
-    @classmethod
-    def from_id(cls, ball_id: int):
-        if ball_id < 0 or ball_id > 15: raise Exception("Not a valid ball ID.")
-
-        if ball_id == 8:
-            return cls.EIGHT
-        
-        if ball_id == 0:
-            return cls.CUE
-
-        if ball_id >= 1 and ball_id <= 7:
-            return cls.SOLID
-        
-        if ball_id >= 9 and ball_id <= 15:
-            return cls.STRIPED
-
-
-@dataclasses.dataclass
 class Ball:
 
     def __init__(
@@ -42,7 +18,7 @@ class Ball:
         self.radius = radius
         self.p = [x_0, y_0]
         self.v = [v_mag, v_radians]
-        self.team = BallTeam.from_id(self.id)
+        self.team = Team.from_id(self.id)
 
     def __copy__(self):
         return Ball(self.id, self.radius, self.p[0], self.p[1], self.v[0], self.v[1])
