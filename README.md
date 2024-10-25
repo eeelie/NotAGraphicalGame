@@ -21,3 +21,10 @@ If you are a new user and want to further develop the code, a noxfile is provide
 ```bash
 nox -s tests
 ```
+
+
+TODO:
+- revisit renderer
+- save temp animations to their own dir
+- save a video of the game at the end
+- only keep relevant animations
