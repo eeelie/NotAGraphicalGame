@@ -2,10 +2,10 @@
 from __future__ import annotations
 import random
 import dataclasses
-from src.player.player import Player, PlayerID
-from src.ball.ball import Ball
-from game_logic.team import Team
-from game_logic.game_state import GameState
+from src.game_logic.player import Player, PlayerID
+from src.physics_engine.ball import Ball
+from src.game_logic.team import Team
+from src.game_logic.game_state import GameState
 from src.game_logic.start_positions import BALL_START_POSITIONS
 
 @dataclasses.dataclass
@@ -55,7 +55,7 @@ class GameLoop():
         
     def current_player_name(self) -> str:
         ''' returns the current player's name '''
-        return self.players[self.current_player_id].name
+        return self.players[self.current_player_id.value].name
     
     def update_state(self, velocity: float, angle: float):
         ''' updates the running state '''
@@ -101,7 +101,7 @@ class GameLoop():
 
         # wrong ball scratch
         first_ball_team = Team.from_id(pocketed[0])
-        if self.players[self.current_player_id].team != first_ball_team:
+        if self.players[self.current_player_id.value].team != first_ball_team:
             return Player.get_opponent_id(self.current_player_id)
         
         # else case: if the self.players[current_player_id].team == first_ball_team, 

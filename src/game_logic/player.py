@@ -3,7 +3,7 @@ import dataclasses
 from enum import Enum
 from random import randint
 
-from game_logic.team import Team
+from src.game_logic.team import Team
 
 class PlayerID(Enum):
     PLAYER_0 = 0

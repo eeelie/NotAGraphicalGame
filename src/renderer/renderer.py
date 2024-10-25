@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 from functools import partial
 import sys
 
-from src.ball.ball import Ball
-from game_logic.game_state import GameState
+from src.physics_engine.ball import Ball
+from src.game_logic.game_state import GameState
+from src.game_logic.team import Team
 
 
 def animate(balls_to_graph: list[dict[int:Ball]]):
@@ -57,7 +58,7 @@ def animate(balls_to_graph: list[dict[int:Ball]]):
             color = getBallColor(ball)
             ball_patches = []
 
-            if ball.team == "stripe":
+            if ball.team == Team.STRIPED:
                 plotBall = plt.Circle(
                     ball.p, ball.radius, facecolor=color, edgecolor="white", hatch=r"-"
                 )
@@ -133,7 +134,7 @@ def graph_state(state: GameState):
     for ball in state.balls.values():
         color = getBallColor(ball)
 
-        if ball.team == "stripe":
+        if ball.team == Team.STRIPED:
             plotBall = plt.Circle(
                 ball.p, ball.radius, facecolor=color, edgecolor="white", hatch=r"-"
             )

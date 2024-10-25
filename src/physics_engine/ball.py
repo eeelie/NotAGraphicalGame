@@ -1,7 +1,7 @@
 from __future__ import annotations
 import numpy as np
 
-from game_logic.team import Team
+from src.game_logic.team import Team
 
 class Ball:
 

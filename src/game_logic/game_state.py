@@ -1,6 +1,7 @@
 from __future__ import annotations
 import dataclasses
-from src.ball.ball import Ball
+from src.physics_engine.ball import Ball
+from src.physics_engine.kinematics import Kinematics
 import numpy as np
 import copy
 
@@ -52,7 +53,7 @@ class GameState:
         while True:
 
             # steps everything forward one step, modifies velocities, returns updated ball dict
-            balls = update_one_step(
+            balls = Kinematics.step(
                 balls,
                 self.DT,
                 self.ACCELERATION,
