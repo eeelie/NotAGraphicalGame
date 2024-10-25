@@ -1,61 +1,80 @@
 from __future__ import annotations
 
-import matplotlib.pyplot as plt
-
-from src.game.game import Game, take_input
-from src.visualize.visualize import graph_state, open_visualization, animate, animation
 import datetime
 import time
+import matplotlib.pyplot as plt
 
-player1_name = input("Player 1, what's your name?")
-player2_name = input("Player 2, what's your name?")
+from game_logic.game_loop import GameLoop
+from src.visualize.visualize import graph_state, open_visualization, animate, animation
+from src.input_handler import InputHandler
+from src.player.player import PlayerID
 
-game = Game(player1_name, player2_name)
-game.start_game(time.time())
-start_fig = graph_state(game.running_state)
-plt.savefig("start_fig.jpg")
-open_visualization("start_fig.jpg")
+class GameSession:
 
-print(f"{player1_name}, your team is {game.players[0].team}")
-print(f"{player2_name}, your team is {game.players[1].team}")
+    def __init__(self) -> None:
 
-game_over = False
-# every run of the loop will be one turn of the game
-while not game_over:
+        self.player_names = [InputHandler.get_name(PlayerID.PLAYER_0),
+                        InputHandler.get_name(PlayerID.PLAYER_1)]
 
-    # take input for that player
-    print(f"{game.current_player_name()}, your turn:")
-    velocity, angle = take_input()
+        self.game = GameLoop(self.player_names)
+        self.game.start_game(time.time())
 
-    # update the state
-    game.update_state(velocity, angle)
+        start_fig = graph_state(self.game.running_state)
+        plt.savefig("start_fig.jpg")
+        open_visualization("start_fig.jpg")
 
-    pocketed = game.pocketed_this_turn()
+        for i, name in enumerate(self.player_names):
+            print(f"{name}, your team is {self.game.players[i].team}")
 
-    # update each player's balls left list
-    game.update_players()
 
-    # output graph
-    anim = animate(game.running_state.log)
-    time = datetime.datetime.now()
-    file = f"{time.month}-{time.day}--{time.hour}-{time.minute}-{time.second}--graphic"
-    video_writer = animation.FFMpegWriter(fps=24)
-    print("Game is being animated")
-    anim.save(file + ".mp4", writer=video_writer)
+    def play(self) -> None:
+        # every turn of the loop will be one turn of the game
 
-    last_state = graph_state(game.running_state)
+        game_over = False
+        while not game_over:
 
-    plt.savefig(file + ".jpg")
-    open_visualization(file + ".jpg")
+            # take input for that player
+            print(f"{self.game.current_player_name()}, your turn:")
+            velocity = InputHandler.get_velocity()
+            angle = InputHandler.get_angle()
 
-    open_visualization(file + ".mp4")
 
-    print(f"The balls pocketed this turn were {*pocketed,}")
+            # update the state
+            self.game.update_state(velocity, angle)
 
-    # end of game logic
-    if 8 in pocketed:
-        print(f"Game over! {game.winner()} wins!")
-        break
+            pocketed = self.game.pocketed_this_turn()
 
-    # figure out who plays next
-    game.current_player_id = game.next_player(pocketed)
+            # update each player's balls left list
+            self.game.update_players()
+
+            # output graph
+            anim = animate(self.game.running_state.log)
+            time = datetime.datetime.now()
+            file = f"{time.month}-{time.day}--{time.hour}-{time.minute}-{time.second}--graphic"
+            video_writer = animation.FFMpegWriter(fps=24)
+            print("Game is being animated")
+            anim.save(file + ".mp4", writer=video_writer)
+
+            last_state = graph_state(self.game.running_state)
+
+            plt.savefig(file + ".jpg")
+            open_visualization(file + ".jpg")
+
+            open_visualization(file + ".mp4")
+
+            print(f"The balls pocketed this turn were {*pocketed,}")
+
+            # end of game logic
+            if 8 in pocketed:
+                print(f"Game over! {self.game.winner()} wins!")
+                break
+
+            # figure out who plays next
+            self.game.current_player_id = self.game.next_player(pocketed)
+
+
+
+
+if __name__ == "__main__":
+    game_session = GameSession()
+    game_session.play()
